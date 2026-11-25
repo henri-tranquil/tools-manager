@@ -1,43 +1,158 @@
-<div class="lh">
-  <div class="lh__summary">
-    <span
-      class="lh__gauge"
-      [attr.data-band]="band()"
-      role="img"
-      [attr.aria-label]="'Score de performance : ' + result().score + ' sur 100'"
-    >
-      {{ result().score }}
-    </span>
-    <span class="lh__verdict">{{ verdict() }}</span>
-    <span class="kicker">Barème Lighthouse 10+, mobile</span>
+<div class="stack">
+  <div class="seg" role="group" aria-label="Mode">
+    <button type="button" [attr.aria-pressed]="mode() === 'url'" (click)="mode.set('url')">
+      Analyser une URL
+    </button>
+    <button type="button" [attr.aria-pressed]="mode() === 'manual'" (click)="mode.set('manual')">
+      Calculer à la main
+    </button>
   </div>
 
-  <div class="lh__metrics">
-    @for (metric of metrics; track metric.id) {
-      @let score = result().metrics[metric.id];
-      <div class="lh__row">
-        <label class="lh__label" [for]="'lh-' + metric.id">
-          {{ metric.label }}
-          <span class="lh__weight">· {{ metric.weight }} %</span>
-        </label>
-        <span class="lh__input">
-          <input
-            #field
-            class="field field--small"
-            type="text"
-            inputmode="decimal"
-            autocomplete="off"
-            [id]="'lh-' + metric.id"
-            [value]="inputs()[metric.id]"
-            (input)="update(metric.id, field.value)"
-          />
-          <span class="lh__unit">{{ metric.unit }}</span>
-        </span>
-        <span class="lh__bar" aria-hidden="true">
-          <span class="lh__fill" [attr.data-band]="bandOf(metric)" [style.width.%]="score"></span>
-        </span>
-        <span class="lh__score">{{ score }}</span>
+  @if (mode() === 'url') {
+    <form class="lh-form" novalidate (submit)="$event.preventDefault(); analyze()">
+      <label class="label lh-form__url">
+        Adresse de la page
+        <input
+          #u
+          class="field field--compact"
+          type="url"
+          inputmode="url"
+          placeholder="https://exemple.fr"
+          autocomplete="url"
+          [value]="url()"
+          (input)="url.set(u.value)"
+        />
+      </label>
+      <div class="seg" role="group" aria-label="Appareil simulé">
+        <button
+          type="button"
+          [attr.aria-pressed]="strategy() === 'mobile'"
+          (click)="strategy.set('mobile')"
+        >
+          Mobile
+        </button>
+        <button
+          type="button"
+          [attr.aria-pressed]="strategy() === 'desktop'"
+          (click)="strategy.set('desktop')"
+        >
+          Ordinateur
+        </button>
       </div>
-    }
-  </div>
+      <button type="submit" class="btn btn--coral lift" [disabled]="status() === 'loading'">
+        {{ status() === 'loading' ? 'Analyse…' : 'Analyser' }}
+      </button>
+    </form>
+
+    <p class="note">
+      L'URL est envoyée à l'API PageSpeed Insights de Google, qui fait tourner Lighthouse. C'est le
+      seul outil du site qui sort du navigateur.
+      <button type="button" class="lh-link" (click)="testThisSite()">Tester ce site</button>
+    </p>
+
+    <div aria-live="polite">
+      @switch (status()) {
+        @case ('loading') {
+          <div class="lh-loading">
+            <span class="lh-loading__bar" aria-hidden="true"></span>
+            <p>Lighthouse charge la page et mesure ses performances (20 à 40 secondes)…</p>
+          </div>
+        }
+        @case ('error') {
+          <p class="lh-error" role="alert">{{ error() }}</p>
+          @if (report()) {
+            <a class="lh-link" [href]="report()" target="_blank" rel="noopener">
+              Lancer l'analyse sur PageSpeed Insights ↗
+            </a>
+          }
+        }
+        @case ('done') {
+          @if (result(); as r) {
+            <div class="lh">
+              <div class="lh__summary">
+                <span
+                  class="lh__gauge"
+                  [attr.data-band]="band(r.score)"
+                  role="img"
+                  [attr.aria-label]="'Score de performance : ' + r.score + ' sur 100'"
+                >
+                  {{ r.score }}
+                </span>
+                <span class="lh__verdict">{{ verdictOf(r.score) }}</span>
+                <span class="kicker"
+                  >{{ r.strategy === 'mobile' ? 'Mobile' : 'Ordinateur' }} · PageSpeed
+                  Insights</span
+                >
+              </div>
+              <div class="lh__metrics">
+                <p class="lh__url">{{ r.finalUrl }}</p>
+                @for (metric of r.metrics; track metric.id) {
+                  <div class="lh__row">
+                    <span class="lh__label">
+                      {{ metric.label }} <span class="lh__weight">· {{ metric.weight }} %</span>
+                    </span>
+                    <span class="lh__value">{{ metric.displayValue }}</span>
+                    <span class="lh__bar" aria-hidden="true">
+                      <span
+                        class="lh__fill"
+                        [attr.data-band]="band(metric.score)"
+                        [style.width.%]="metric.score"
+                      ></span>
+                    </span>
+                    <span class="lh__score">{{ metric.score }}</span>
+                  </div>
+                }
+                <a class="lh-link" [href]="report()" target="_blank" rel="noopener">
+                  Voir le rapport complet sur PageSpeed Insights ↗
+                </a>
+              </div>
+            </div>
+          }
+        }
+      }
+    </div>
+  } @else {
+    <div class="lh">
+      <div class="lh__summary">
+        <span
+          class="lh__gauge"
+          [attr.data-band]="band(manual().score)"
+          role="img"
+          [attr.aria-label]="'Score de performance : ' + manual().score + ' sur 100'"
+        >
+          {{ manual().score }}
+        </span>
+        <span class="lh__verdict">{{ verdictOf(manual().score) }}</span>
+        <span class="kicker">Barème Lighthouse 10+, mobile</span>
+      </div>
+
+      <div class="lh__metrics">
+        @for (metric of metrics; track metric.id) {
+          @let score = manual().metrics[metric.id];
+          <div class="lh__row">
+            <label class="lh__label" [for]="'lh-' + metric.id">
+              {{ metric.label }} <span class="lh__weight">· {{ metric.weight }} %</span>
+            </label>
+            <span class="lh__input">
+              <input
+                #field
+                class="field field--small"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                [id]="'lh-' + metric.id"
+                [value]="inputs()[metric.id]"
+                (input)="update(metric.id, field.value)"
+              />
+              <span class="lh__unit">{{ metric.unit }}</span>
+            </span>
+            <span class="lh__bar" aria-hidden="true">
+              <span class="lh__fill" [attr.data-band]="band(score)" [style.width.%]="score"></span>
+            </span>
+            <span class="lh__score">{{ score }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>

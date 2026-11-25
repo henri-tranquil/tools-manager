@@ -1,4 +1,7 @@
 import type { UnitPairId } from '../../tools/conversion/convertisseur/unit-pairs';
+import type { ToolPanel } from '../../tools/panels';
+
+export type { ToolPanel };
 
 /**
  * - `internal` : codé dans ce dépôt, se déplie sur place dans sa section.
@@ -6,9 +9,6 @@ import type { UnitPairId } from '../../tools/conversion/convertisseur/unit-pairs
  * - `link`     : simple ressource (recette, article), ouverte dans un nouvel onglet.
  */
 export type ToolType = 'internal' | 'external' | 'link';
-
-/** Panneaux internes déjà codés. Un outil interne sans panneau affiche « En construction ». */
-export type ToolPanel = 'minuteur' | 'convertisseur' | 'lighthouse' | 'km-effort';
 
 export interface Tool {
   /** Identifiant unique sur tout le site : il sert dans l'URL (`?outil=`). */
@@ -18,6 +18,7 @@ export interface Tool {
   /** Texte très court affiché dans la vignette (« LH », « D+ », « °F »…). */
   readonly mono: string;
   readonly type: ToolType;
+  /** Composant à déplier, pour les outils `internal` (voir `tools/panels.ts`). */
   readonly panel?: ToolPanel;
   /** Pour le panneau `convertisseur`. */
   readonly unitPair?: UnitPairId;

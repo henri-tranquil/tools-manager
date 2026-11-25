@@ -100,6 +100,70 @@
   text-align: right;
 }
 
+.lh__value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.lh__url {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.lh-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.lh-form__url {
+  flex: 1 1 320px;
+}
+
+.lh-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.lh-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.lh-loading__bar {
+  height: 18px;
+  border: var(--bw-thin) solid var(--ink);
+  border-radius: 999px;
+  background: repeating-linear-gradient(-45deg, var(--yellow) 0 14px, var(--paper) 14px 28px);
+  background-size: 40px 18px;
+  animation: lh-progress 0.8s linear infinite;
+}
+
+@keyframes lh-progress {
+  to {
+    background-position: 40px 0;
+  }
+}
+
+.lh-error {
+  padding: 14px 16px;
+  border: var(--bw-thin) solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--coral);
+  font-weight: 700;
+}
+
 @media (max-width: 640px) {
   .lh__row {
     grid-template-columns: minmax(0, 1fr) 44px;

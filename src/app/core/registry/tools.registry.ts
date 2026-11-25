@@ -30,6 +30,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Temps de chargement d'une page selon le réseau : 3G, 4G, fibre.",
         mono: 'kB',
         type: 'internal',
+        panel: 'budget-poids',
       },
       {
         id: 'px-rem',
@@ -37,6 +38,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Conversion selon la taille de police racine.',
         mono: 'rem',
         type: 'internal',
+        panel: 'px-rem',
       },
       {
         id: 'contraste',
@@ -44,6 +46,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Ratio texte / fond et niveaux AA / AAA.',
         mono: 'Aa',
         type: 'internal',
+        panel: 'contraste',
       },
       {
         id: 'couleurs',
@@ -51,6 +54,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'HEX ↔ RGB ↔ HSL, avec aperçu et palette.',
         mono: '#',
         type: 'internal',
+        panel: 'couleurs',
       },
       {
         id: 'cron',
@@ -58,6 +62,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Traduit une expression cron en français.',
         mono: '*/5',
         type: 'internal',
+        panel: 'cron',
       },
     ],
   },
@@ -84,6 +89,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'min/km ↔ km/h et temps de passage.',
         mono: 'km/h',
         type: 'internal',
+        panel: 'allure',
       },
       {
         id: 'temps-rando',
@@ -91,6 +97,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Durée de marche selon distance et dénivelé (DIN 33466).',
         mono: 'h:m',
         type: 'internal',
+        panel: 'temps-rando',
       },
       {
         id: 'developpement-velo',
@@ -98,6 +105,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Plateau, pignon, roue → mètres par tour et vitesse.',
         mono: '52/11',
         type: 'internal',
+        panel: 'developpement-velo',
       },
       {
         id: 'zones-cardio',
@@ -105,6 +113,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Zones d'entraînement depuis la FC max et la FC de repos.",
         mono: 'FC',
         type: 'internal',
+        panel: 'zones-cardio',
       },
       {
         id: 'ravitaillement',
@@ -112,6 +121,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Eau, sel et glucides à emporter selon la durée.',
         mono: 'H₂O',
         type: 'internal',
+        panel: 'ravitaillement',
       },
     ],
   },
@@ -137,6 +147,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Tasses et cuillères en grammes, selon l'ingrédient.",
         mono: 'cup',
         type: 'internal',
+        panel: 'mesures',
       },
       {
         id: 'portions',
@@ -144,6 +155,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Recalcule une recette pour 2, 4 ou 10 personnes.',
         mono: '×2',
         type: 'internal',
+        panel: 'portions',
       },
       {
         id: 'taille-moule',
@@ -151,6 +163,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Adapte les quantités d'un moule rond à un carré.",
         mono: 'Ø',
         type: 'internal',
+        panel: 'taille-moule',
       },
       {
         id: 'pourcentage-boulanger',
@@ -158,13 +171,15 @@ export const SECTIONS: readonly Section[] = [
         description: "Farine, eau, sel, levain : l'hydratation d'une pâte.",
         mono: '%',
         type: 'internal',
+        panel: 'pourcentage-boulanger',
       },
       {
         id: 'recettes',
         title: 'Recettes favorites',
-        description: 'Les recettes que je refais souvent, en liens directs.',
+        description: 'Votre carnet de liens vers des recettes, gardé sur cet appareil.',
         mono: 'Re',
         type: 'internal',
+        panel: 'recettes',
       },
     ],
   },
@@ -182,6 +197,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Angle de coupe pour un cadre à n côtés.',
         mono: '45°',
         type: 'internal',
+        panel: 'angle-onglet',
       },
       {
         id: 'debit-planches',
@@ -189,6 +205,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Liste de coupes optimisée pour limiter les chutes.',
         mono: 'cut',
         type: 'internal',
+        panel: 'debit-planches',
       },
       {
         id: 'metrage-tissu',
@@ -196,6 +213,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Longueur à acheter selon le patron et la laize.',
         mono: 'm',
         type: 'internal',
+        panel: 'metrage-tissu',
       },
       {
         id: 'cyanotype',
@@ -203,6 +221,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Dosage des solutions A et B, minuteur d'exposition aux UV.",
         mono: 'UV',
         type: 'internal',
+        panel: 'cyanotype',
       },
       {
         id: 'nombre-or',
@@ -210,6 +229,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Proportions harmonieuses pour un cadre ou un motif.',
         mono: 'φ',
         type: 'internal',
+        panel: 'nombre-or',
       },
       {
         id: 'niveau',
@@ -217,6 +237,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Utilise le capteur d'inclinaison du téléphone.",
         mono: '0°',
         type: 'internal',
+        panel: 'niveau',
       },
     ],
   },
@@ -298,6 +319,7 @@ export const SECTIONS: readonly Section[] = [
         description: '25 minutes de travail, 5 minutes de pause.',
         mono: '25',
         type: 'internal',
+        panel: 'pomodoro',
       },
       {
         id: 'chronometre',
@@ -305,6 +327,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Avec tours et temps intermédiaires.',
         mono: '0:00',
         type: 'internal',
+        panel: 'chronometre',
       },
       {
         id: 'regle-de-trois',
@@ -312,6 +335,7 @@ export const SECTIONS: readonly Section[] = [
         description: "Trouve la valeur manquante d'une proportion.",
         mono: '÷',
         type: 'internal',
+        panel: 'regle-de-trois',
       },
       {
         id: 'mot-de-passe',
@@ -319,6 +343,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Génère des mots de passe solides, localement.',
         mono: '***',
         type: 'internal',
+        panel: 'mot-de-passe',
       },
       {
         id: 'tirage-au-sort',
@@ -326,6 +351,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Dé, pile ou face, un nom au hasard.',
         mono: '?',
         type: 'internal',
+        panel: 'tirage-au-sort',
       },
       {
         id: 'qr-code',
@@ -333,6 +359,7 @@ export const SECTIONS: readonly Section[] = [
         description: 'Transforme un lien ou un texte en QR code.',
         mono: 'QR',
         type: 'internal',
+        panel: 'qr-code',
       },
     ],
   },
@@ -340,31 +367,33 @@ export const SECTIONS: readonly Section[] = [
 
 export const WORKS_SECTION_ID = 'realisations';
 
-/** TODO : renseigner les URL publiques, descriptions et technos de chaque réalisation. */
 export const WORKS: readonly Work[] = [
   {
     id: 'anne-fait-main',
     title: 'Anne Fait Main',
-    description: 'Description à venir.',
-    url: '',
+    description:
+      "Site vitrine d'une artisane : créations en lin brodé main, catalogue, marchés et salons.",
+    url: 'https://www.anne-faitmain.fr/',
     color: '#7CE0B5',
-    techs: [],
+    techs: ['Site vitrine', 'PHP'],
   },
   {
-    id: 'cartography',
-    title: 'Cartography',
-    description: 'Description à venir.',
-    url: '',
+    id: 'cartocraft',
+    title: 'CartoCraft',
+    description:
+      'Éditeur de cartes de mondes imaginaires : relief, rivières, climats et toponymes, directement dans le navigateur.',
+    url: 'https://henri-tranquil.github.io/cartocraft/',
     color: '#FFD23F',
-    techs: [],
+    techs: ['Angular', 'Web Workers', 'IndexedDB'],
   },
   {
-    id: 'marqueterie-de-paille',
+    id: 'atelier-paille',
     title: 'Marqueterie de paille',
-    description: 'Description à venir.',
-    url: '',
+    description:
+      'Configurateur pour concevoir une marqueterie de paille et prévisualiser son rendu en 3D.',
+    url: 'https://henri-tranquil.github.io/marquetry-configurator/',
     color: '#FF6B6B',
-    techs: [],
+    techs: ['Angular', 'Three.js'],
   },
 ];
 

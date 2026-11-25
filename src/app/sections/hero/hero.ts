@@ -2,17 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { Section } from '../../core/registry/models';
 import { ACTIVITIES, WORKS_SECTION_ID } from '../../core/registry/tools.registry';
 import { formatDecimal } from '../../shared/format';
-import {
-  COOKING_PRESETS,
-  DEFAULT_PRESET_ID,
-  formatClock,
-} from '../../tools/cuisine/minuteur/presets';
+import { formatClock, formatDuration } from '../../shared/time';
+import { COOKING_PRESETS, DEFAULT_PRESET_ID } from '../../tools/cuisine/minuteur/presets';
 import {
   computeLighthouse,
   LIGHTHOUSE_EXAMPLE,
   scoreBand,
 } from '../../tools/dev/lighthouse/lighthouse-score';
-import { estimateTrail, formatDuration } from '../../tools/sport/km-effort/trail-estimate';
+import { estimateTrail } from '../../tools/sport/km-effort/trail-estimate';
 
 const TRAIL_EXAMPLE = { distanceKm: 32, elevationM: 1800, paceSecondsPerKm: 390 };
 

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { formatDecimal, parseDecimal } from '../../../shared/format';
-import { estimateTrail, formatDuration, parsePace } from './trail-estimate';
+import { formatDuration, parseMinSec } from '../../../shared/time';
+import { estimateTrail } from './trail-estimate';
 
 @Component({
   selector: 'app-km-effort',
@@ -18,7 +19,7 @@ export class KmEffort {
     estimateTrail(
       parseDecimal(this.distance()),
       parseDecimal(this.elevation()),
-      parsePace(this.pace()),
+      parseMinSec(this.pace()),
     ),
   );
 

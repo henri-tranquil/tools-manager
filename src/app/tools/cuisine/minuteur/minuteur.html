@@ -7,7 +7,7 @@
       aria-live="off"
       [class.minuteur__time--done]="finished()"
     >
-      {{ display() }}
+      {{ timer.display() }}
     </span>
     <p class="visually-hidden" aria-live="assertive">
       @if (finished()) {
@@ -15,7 +15,7 @@
       }
     </p>
     <div class="minuteur__actions">
-      <button type="button" class="btn btn--coral lift minuteur__start" (click)="startPause()">
+      <button type="button" class="btn btn--coral lift minuteur__start" (click)="timer.toggle()">
         {{ startLabel() }}
       </button>
       <button type="button" class="btn lift" (click)="reset()">Réinitialiser</button>

@@ -16,41 +16,19 @@
   </div>
 
   <div class="panel__body">
-    @switch (t.panel) {
-      @case ('minuteur') {
-        @defer {
-          <app-minuteur />
-        } @placeholder {
-          <p class="panel__loading">Chargement…</p>
-        }
-      }
-      @case ('convertisseur') {
-        @defer {
-          <app-convertisseur [pairId]="t.unitPair ?? 'pouces-cm'" />
-        } @placeholder {
-          <p class="panel__loading">Chargement…</p>
-        }
-      }
-      @case ('lighthouse') {
-        @defer {
-          <app-lighthouse />
-        } @placeholder {
-          <p class="panel__loading">Chargement…</p>
-        }
-      }
-      @case ('km-effort') {
-        @defer {
-          <app-km-effort />
-        } @placeholder {
-          <p class="panel__loading">Chargement…</p>
-        }
-      }
-      @default {
-        <div class="panel__todo">
-          <p>{{ t.description }}</p>
-          <span class="panel__badge">En construction</span>
-        </div>
-      }
+    @if (component.hasValue()) {
+      <ng-container *ngComponentOutlet="component.value(); inputs: inputs()" />
+    } @else if (component.error()) {
+      <p class="panel__loading">
+        Impossible de charger l'outil. Vérifiez votre connexion et réessayez.
+      </p>
+    } @else if (t.panel) {
+      <p class="panel__loading">Chargement…</p>
+    } @else {
+      <div class="panel__todo">
+        <p>{{ t.description }}</p>
+        <span class="panel__badge">En construction</span>
+      </div>
     }
   </div>
 </div>

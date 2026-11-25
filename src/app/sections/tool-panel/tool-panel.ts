@@ -1,14 +1,19 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { NgComponentOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  resource,
+} from '@angular/core';
 import { Section, Tool } from '../../core/registry/models';
-import { Convertisseur } from '../../tools/conversion/convertisseur/convertisseur';
-import { Minuteur } from '../../tools/cuisine/minuteur/minuteur';
-import { Lighthouse } from '../../tools/dev/lighthouse/lighthouse';
-import { KmEffort } from '../../tools/sport/km-effort/km-effort';
+import { PANEL_LOADERS } from '../../tools/panels';
 
-/** Panneau déplié sous les cartes d'une section. Chaque outil est chargé à la demande (@defer). */
+/** Panneau déplié sous les cartes d'une section. Le composant de l'outil est chargé à la demande. */
 @Component({
   selector: 'app-tool-panel',
-  imports: [Minuteur, Convertisseur, Lighthouse, KmEffort],
+  imports: [NgComponentOutlet],
   templateUrl: './tool-panel.html',
   styleUrl: './tool-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,4 +22,15 @@ export class ToolPanel {
   readonly tool = input.required<Tool>();
   readonly section = input.required<Section>();
   readonly closed = output<void>();
+
+  protected readonly component = resource({
+    params: () => this.tool().panel,
+    loader: ({ params }) => PANEL_LOADERS[params](),
+  });
+
+  /** Seuls les outils paramétrés reçoivent des entrées (le convertisseur, sa paire d'unités). */
+  protected readonly inputs = computed<Record<string, unknown>>(() => {
+    const pairId = this.tool().unitPair;
+    return pairId ? { pairId } : {};
+  });
 }

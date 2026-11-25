@@ -20,10 +20,10 @@ npm test                  # Vitest en mode watch
 npm run test:ci           # une seule passe (utilisé par la CI)
 npx ng test --watch=false --include src/app/tools/dev/lighthouse/lighthouse-score.spec.ts   # un seul fichier
 npm run build             # build de production
-npm run build:pages       # build avec --base-href /tools-manager/ + copie index.html → 404.html
+npm run build:pages       # build pour GitHub Pages en local (sans clé PageSpeed)
 ```
 
-Le déploiement passe par `.github/workflows/deploy.yml` : à chaque push sur `main`, il lance `test:ci` puis `build:pages`, et publie `dist/tools-manager/browser` sur GitHub Pages. Dans les réglages du dépôt, la source de Pages doit être « GitHub Actions ».
+Le déploiement passe par `.github/workflows/deploy.yml` : à chaque push sur `main`, il lance `test:ci`, construit avec `--base-href /tools-manager/` et `--define PSI_API_KEY=…` (secret de dépôt `PAGESPEED_API_KEY`, facultatif), copie `index.html` en `404.html`, puis publie `dist/tools-manager/browser` sur GitHub Pages (source de Pages : « GitHub Actions », déjà activée).
 
 ## Règle absolue : aucune donnée personnelle
 
@@ -34,7 +34,9 @@ Le dépôt est **public**. Il ne doit contenir **aucune** donnée personnelle, n
 - pas de données de santé : FC max, poids, temps de course réels ;
 - les valeurs par défaut des outils sont des exemples génériques.
 
-Les outils calculent **tout dans le navigateur**. Aucun appel réseau, aucun compte, aucun traceur ni outil d'analyse d'audience. Si un outil doit mémoriser des réglages, il utilise `localStorage`, jamais un backend. La promesse « 100 % local, 0 compte requis » est affichée sur le site et doit rester vraie.
+Les outils calculent **tout dans le navigateur** : aucun compte, aucun traceur ni outil d'analyse d'audience. Si un outil doit mémoriser des réglages, il utilise `shared/storage.ts` (`localStorage`, clés préfixées `etabli:`), jamais un backend.
+
+**Seule exception réseau** : l'analyse Lighthouse d'une URL (`tools/dev/lighthouse/psi.ts`) appelle l'API PageSpeed Insights de Google, uniquement au clic sur « Analyser », et l'outil le dit à l'écran. Le pied de page et l'accueil mentionnent cette exception : tout nouvel appel réseau doit être signalé de la même façon. La clé d'API n'est jamais écrite dans le code : elle est injectée au build (`declare const PSI_API_KEY` + `--define`). Sans clé, le quota anonyme partagé est souvent épuisé (erreur 429) : l'outil propose alors un lien vers pagespeed.web.dev.
 
 ## Concept clé : trois types d'outils
 
@@ -42,8 +44,8 @@ Chaque entrée d'une section appartient à l'un de ces trois types. Toute l'arch
 
 | Type | Où se trouve le code | Comportement dans l'app |
 |---|---|---|
-| `internal` | Dans **ce** dépôt (ex. le minuteur) | Se **déplie sur place** dans sa section, sans changer de page (composant chargé avec `@defer`) |
-| `external` | Outil autonome dans **un autre dépôt** (ex. Cartography) | Lien sortant, ouvert dans un nouvel onglet (`target="_blank" rel="noopener"`) |
+| `internal` | Dans **ce** dépôt (ex. le minuteur) | Se **déplie sur place** dans sa section, sans changer de page (composant chargé à la demande) |
+| `external` | Outil autonome dans **un autre dépôt** (ex. CartoCraft) | Lien sortant, ouvert dans un nouvel onglet (`target="_blank" rel="noopener"`) |
 | `link` | Ressource simple (une recette, un article) | Lien sortant, ouvert dans un nouvel onglet |
 
 Les projets de la section « Mes réalisations » sont de type `external`, accompagnés de métadonnées de portfolio : description, capture d'écran, technologies, URL.
@@ -56,7 +58,7 @@ Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) e
 - `ACTIVITIES` : les mots du bandeau défilant.
 - `REPOSITORY_URL` : l'adresse du dépôt.
 
-À partir de ce registre sont générés le menu (`layout/site-header`), les compteurs et les autocollants de l'accueil (`sections/hero`), les sections (`sections/tool-section`), les réalisations (`sections/realisations`) et la palette de recherche (`layout/search-dialog`). `tools.registry.spec.ts` vérifie la cohérence du registre : identifiants uniques, `defaultOpen` valides, URL présentes.
+À partir de ce registre sont générés le menu (`layout/site-header`), les compteurs et les autocollants de l'accueil (`sections/hero`), les sections (`sections/tool-section`), les réalisations (`sections/realisations`) et la palette de recherche (`layout/search-dialog`). `tools.registry.spec.ts` vérifie la cohérence du registre : identifiants uniques, `defaultOpen` valides, URL présentes, et un panneau chargeable pour chaque outil interne.
 
 - **Une seule page.** `App` empile l'accueil, une `ToolSection` par entrée de `SECTIONS`, puis `Realisations`. Les liens de l'en-tête sont des ancres. Chaque section a `min-height: calc(100svh - var(--header-h))`. Le défilement s'aimante sur les sections grâce à `scroll-snap-type: y proximity` sur `html`. On utilise `proximity` et non `mandatory`, parce qu'un panneau déplié peut dépasser l'écran.
 - **État des outils ouverts : le service `core/open-tools.ts`.**
@@ -64,12 +66,13 @@ Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) e
   - Au démarrage, il ouvre le `defaultOpen` de chaque section, puis l'outil donné par `?outil=<id>` s'il y en a un.
   - Il écrit l'outil ouvert dans l'URL avec `history.replaceState`, sans navigation.
   - `App` fait défiler jusqu'à la section d'un lien direct, et gère le raccourci `Ctrl/⌘ K`.
-- **Panneaux : `sections/tool-panel`.**
-  - Le panneau aiguille sur `tool.panel` (`minuteur`, `convertisseur`, `lighthouse`, `km-effort`), et chaque composant est chargé avec `@defer`.
-  - Un outil interne sans `panel` affiche « En construction ».
-  - **Pour ajouter un outil interne** : créer le composant dans `src/app/tools/<section>/<outil>/`, ajouter sa valeur à `ToolPanel` dans `models.ts`, ajouter un `@case` + `@defer` dans `tool-panel.html`, puis renseigner `panel` dans le registre.
-- **Logique séparée de l'affichage.** Chaque outil met ses calculs dans un fichier de fonctions pures avec ses tests (`lighthouse-score.ts`, `trail-estimate.ts`, `unit-pairs.ts`, `presets.ts`) et garde un composant léger. La saisie de nombres passe par `shared/format.ts` : `parseDecimal` accepte la virgule, et `formatDecimal` affiche en fr-FR.
-- **Styles.** Les tokens et les utilitaires partagés (`.lift`, `.btn`, `.field`, `.tag`, `.pill`, `.kicker`, `.visually-hidden`) sont dans `src/styles.scss`. Les composants n'utilisent que les variables CSS. Une section reçoit sa couleur via `[style.--section-color]`. Le budget est de 6 kB de style par composant (avertissement).
+- **Panneaux : `sections/tool-panel` + `tools/panels.ts`.**
+  - `PANEL_LOADERS` associe chaque clé de panneau à un `import()` dynamique : un chunk par outil, téléchargé à l'ouverture. Le type `ToolPanel` est dérivé de ses clés.
+  - `ToolPanel` charge le composant avec `resource()` et l'affiche avec `NgComponentOutlet`. Seul le convertisseur reçoit une entrée (`pairId`, depuis `tool.unitPair`).
+  - **Pour ajouter un outil interne** : créer le composant dans `src/app/tools/<section>/<outil>/`, ajouter une entrée dans `PANEL_LOADERS`, puis `panel: '<clé>'` dans le registre. Un outil interne sans `panel` affiche « En construction » (filet de sécurité ; le test du registre l'interdit).
+- **Logique séparée de l'affichage.** Les calculs sont des fonctions pures testées, regroupées par section : `dev/color.ts`, `dev/cron/cron-parser.ts`, `dev/budget-poids/load-time.ts`, `dev/lighthouse/{lighthouse-score,psi}.ts`, `sport/sport-math.ts`, `cuisine/kitchen-math.ts`, `atelier/workshop-math.ts`, `quotidien/daily-math.ts`, `conversion/convertisseur/unit-pairs.ts`. Les composants restent légers ; les nouveaux outils utilisent un `template`/`styles` inline.
+- **Utilitaires partagés (`src/app/shared/`)** : `format.ts` (`parseDecimal` accepte la virgule, `formatDecimal` en fr-FR), `time.ts` (saisie et affichage de durées), `countdown.ts` (compte à rebours basé sur une échéance, pour minuteur, pomodoro, cyanotype ; appeler `dispose()` à la destruction), `beep.ts` (bips Web Audio), `random.ts` (`cryptoRandomInt` sans biais, injectable pour des tests déterministes), `storage.ts`.
+- **Styles.** Les tokens et les utilitaires partagés (`.lift`, `.btn`, `.field`, `.tag`, `.pill`, `.kicker`, `.visually-hidden`) sont dans `src/styles.scss`, ainsi que la mise en page commune des outils : `.tool-layout` (saisies à gauche, résultats à droite), `.tile` (+ variantes de couleur, `--wide`), `.tile__value`, `.seg` (choix exclusif avec `aria-pressed`), `.table`, `.clock`, `.check`, `.swatch-input`, `.note`. Dans les `<select>`, utiliser `[selected]` sur les `<option>` plutôt que `[value]` sur le `<select>`. Un formulaire qui valide lui-même ses URL porte `novalidate`. Les composants n'utilisent que les variables CSS. Une section reçoit sa couleur via `[style.--section-color]`. Le budget est de 6 kB de style par composant (avertissement).
 
 ## Design : neo-brutalisme « Atelier + Pop »
 
@@ -100,19 +103,19 @@ C'est ce que voient les recruteurs : chaque écran doit être soigné.
   - Toutes les animations sont coupées sous `prefers-reduced-motion`.
 - **Accessibilité** : de vrais `<button>` et `<a>`, `aria-expanded` sur les cartes dépliables, `aria-pressed` sur les préréglages, `role="timer"`, un focus visible (contour de 4 px), et un contraste d'au moins 4.5:1 (texte toujours `#111` sur les couleurs vives).
 
-## Catalogue prévu
+## Catalogue
 
-Sauf mention contraire, les outils sont de type `internal`. Les outils marqués ★ sont ceux qui fonctionnent déjà dans la maquette et qui servent de vitrine.
+Tous les outils listés sont de type `internal` et fonctionnent. Les ★ sont ouverts par défaut (`defaultOpen`) et servent de vitrine.
 
 | # | Section | Couleur | Outils |
 |---|---|---|---|
-| 01 | Web & dev | `#FF9EC7` | ★ Score Lighthouse, Budget de poids (temps de chargement 3G/4G/fibre), px ↔ rem, Contraste WCAG, Couleurs HEX↔RGB↔HSL, Cron en clair |
+| 01 | Web & dev | `#FF9EC7` | ★ Score Lighthouse (analyse d'URL via PageSpeed Insights, ou calcul à la main), Budget de poids (temps de chargement 3G/4G/fibre), px ↔ rem, Contraste WCAG, Couleurs HEX↔RGB↔HSL, Cron en clair |
 | 02 | Sport (trail, vélo, rando) | `#8FD3FF` | ★ Km-effort trail, Allure ↔ vitesse, Temps de rando (DIN 33466), Développement vélo, Zones cardio, Ravitaillement |
-| 03 | Cuisine | `#FFE066` | ★ Minuteur (préréglages coque 3', mollet 6', dur 9', pâtes 10', riz 12', thé 4'), Mesures (tasses/cuillères → g), Portions, Taille du moule, Pourcentage du boulanger, Recettes favorites (`link`) |
+| 03 | Cuisine | `#FFE066` | ★ Minuteur (préréglages coque 3', mollet 6', dur 9', pâtes 10', riz 12', thé 4'), Mesures (tasses/cuillères → g), Portions, Taille du moule, Pourcentage du boulanger, Recettes favorites (carnet de liens en `localStorage`) |
 | 04 | Atelier (bois, couture, marqueterie, cyanotype) | `#FFB38A` | Angle d'onglet, Débit de planches, Métrage de tissu, Cyanotype (dosage A/B et minuteur d'exposition), Nombre d'or, Niveau à bulle |
 | 05 | Conversion | `#7CE0B5` | ★ in↔cm, mi↔km, lb↔kg, oz↔g, °F↔°C, gal US↔L |
 | 06 | Quotidien | `#D9F99D` | Pomodoro, Chronomètre, Règle de trois, Mot de passe, Tirage au sort, QR code |
-| 07 | Mes réalisations | `#B8A9FF` | Anne Fait Main, Cartography, Marqueterie de paille (`external`) |
+| 07 | Mes réalisations | `#B8A9FF` | Anne Fait Main, CartoCraft, Marqueterie de paille (`WORKS`, URL publiques) |
 
 Formules de référence :
 - **Score Lighthouse** (v10+, mobile) : chaque métrique est notée selon une courbe log-normale définie par son `p10` et sa médiane. Cela donne `score = ½·(1 − erf((ln x − ln médiane) / (σ√2)))` avec `σ = (ln médiane − ln p10) / 1,28155`. Poids : FCP 10 % (1800/3000 ms), SI 10 % (3387/5800 ms), LCP 25 % (2500/4000 ms), TBT 30 % (200/600 ms), CLS 25 % (0,1/0,25). Seuils de couleur : 90 et plus vert, 50 à 89 orange, moins de 50 rouge.

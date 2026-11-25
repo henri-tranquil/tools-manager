@@ -1,3 +1,4 @@
+import { PANEL_LOADERS } from '../../tools/panels';
 import { findTool, SECTIONS, WORKS, WORKS_SECTION_ID } from './tools.registry';
 
 describe('registre des outils', () => {
@@ -29,6 +30,25 @@ describe('registre des outils', () => {
   it('les convertisseurs déclarent leur paire d’unités', () => {
     for (const tool of allTools.filter((t) => t.panel === 'convertisseur')) {
       expect(tool.unitPair).toBeTruthy();
+    }
+  });
+
+  it('chaque outil interne a un panneau chargeable', () => {
+    for (const tool of allTools.filter((t) => t.type === 'internal')) {
+      expect(tool.panel, tool.id).toBeDefined();
+      expect(PANEL_LOADERS[tool.panel!], tool.id).toBeTypeOf('function');
+    }
+  });
+
+  it('chaque panneau se charge et fournit un composant', async () => {
+    for (const load of Object.values(PANEL_LOADERS)) {
+      expect(await load()).toBeTypeOf('function');
+    }
+  });
+
+  it('les réalisations ont une URL publique', () => {
+    for (const work of WORKS) {
+      expect(work.url, work.id).toMatch(/^https:\/\//);
     }
   });
 
