@@ -1,0 +1,42 @@
+<div class="minuteur">
+  <div class="minuteur__clock">
+    <span class="pill pill--mint">{{ preset().label }}</span>
+    <span
+      class="minuteur__time"
+      role="timer"
+      aria-live="off"
+      [class.minuteur__time--done]="finished()"
+    >
+      {{ display() }}
+    </span>
+    <p class="visually-hidden" aria-live="assertive">
+      @if (finished()) {
+        Minuteur terminé : {{ preset().label }}.
+      }
+    </p>
+    <div class="minuteur__actions">
+      <button type="button" class="btn btn--coral lift minuteur__start" (click)="startPause()">
+        {{ startLabel() }}
+      </button>
+      <button type="button" class="btn lift" (click)="reset()">Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="minuteur__presets">
+    <p class="kicker" id="minuteur-presets">Préréglages</p>
+    <div class="minuteur__grid" role="group" aria-labelledby="minuteur-presets">
+      @for (p of presets; track p.id) {
+        <button
+          type="button"
+          class="preset"
+          [class.preset--active]="p.id === preset().id"
+          [attr.aria-pressed]="p.id === preset().id"
+          (click)="choose(p)"
+        >
+          <span class="preset__label">{{ p.label }}</span>
+          <span class="preset__time">{{ p.seconds / 60 }} min</span>
+        </button>
+      }
+    </div>
+  </div>
+</div>

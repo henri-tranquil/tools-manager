@@ -1,0 +1,60 @@
+@let s = section();
+<section
+  class="section"
+  [id]="s.id"
+  [style.--section-color]="s.color"
+  [attr.aria-labelledby]="s.id + '-titre'"
+>
+  <div class="section__inner">
+    <header class="section__head">
+      <span class="section__num" aria-hidden="true">{{ number() }}</span>
+      <div class="section__intro">
+        <ul class="section__tags" aria-label="Thèmes">
+          @for (tag of s.tags; track tag) {
+            <li class="tag">{{ tag }}</li>
+          }
+        </ul>
+        <h2 class="section__title" [id]="s.id + '-titre'">{{ s.title }}</h2>
+        <p class="section__desc">{{ s.description }}</p>
+      </div>
+      <span class="section__count">{{ s.tools.length }} outils</span>
+    </header>
+
+    <div class="section__grid">
+      @for (tool of s.tools; track tool.id) {
+        @if (tool.type === 'internal') {
+          @let isOpen = openId() === tool.id;
+          <button
+            type="button"
+            class="tool lift"
+            [class.tool--open]="isOpen"
+            [attr.aria-expanded]="isOpen"
+            [attr.aria-controls]="isOpen ? 'panel-' + tool.id : null"
+            (click)="toggle(tool.id)"
+          >
+            <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
+            <span class="tool__text">
+              <span class="tool__title">{{ tool.title }}</span>
+              <span class="tool__desc">{{ tool.description }}</span>
+            </span>
+            <span class="tool__sign" aria-hidden="true">{{ isOpen ? '−' : '+' }}</span>
+          </button>
+        } @else {
+          <a class="tool lift" [href]="tool.url" target="_blank" rel="noopener">
+            <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
+            <span class="tool__text">
+              <span class="tool__title">{{ tool.title }}</span>
+              <span class="tool__desc">{{ tool.description }}</span>
+            </span>
+            <span class="tool__sign tool__sign--link" aria-hidden="true">↗</span>
+            <span class="visually-hidden">(nouvel onglet)</span>
+          </a>
+        }
+      }
+    </div>
+
+    @if (openTool(); as tool) {
+      <app-tool-panel [tool]="tool" [section]="s" (closed)="close()" />
+    }
+  </div>
+</section>

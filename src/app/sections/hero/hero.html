@@ -1,0 +1,64 @@
+<section id="accueil" class="hero" aria-labelledby="hero-titre">
+  <div class="hero__inner">
+    <div class="hero__text">
+      <p class="hero__badge">
+        <span class="hero__badge-tag">OPEN SOURCE</span>
+        Boîte à outils &amp; portfolio d'un dev bricoleur
+      </p>
+      <h1 id="hero-titre" class="hero__title">
+        Des outils<br /><span class="hero__highlight">faits main</span>.
+      </h1>
+      <p class="hero__lead">
+        Pour le trail, la cuisine, l'atelier et le code. Tout s'utilise directement ici, sans compte
+        et sans rien envoyer : les calculs restent dans votre navigateur.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--dark lift" [href]="'#' + firstSectionId()">Explorer les outils ↓</a>
+        <a class="btn btn--lavender lift" [href]="'#' + worksId">Voir mes réalisations</a>
+      </div>
+      <dl class="hero__stats">
+        <div>
+          <dt>outils</dt>
+          <dd>{{ toolCount() }}</dd>
+        </div>
+        <div>
+          <dt>sections</dt>
+          <dd>{{ sectionCount() }}</dd>
+        </div>
+        <div>
+          <dt>compte requis</dt>
+          <dd>0</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="stickers" aria-hidden="true">
+      <div class="sticker sticker--lh">
+        <span class="sticker__gauge" [attr.data-band]="lighthouse.band">{{
+          lighthouse.score
+        }}</span>
+        <span class="sticker__col">
+          <span class="kicker">Lighthouse</span>
+          <span class="sticker__title">Performance</span>
+        </span>
+      </div>
+      <div class="sticker sticker--timer">
+        <span class="kicker">Minuteur · œuf mollet</span>
+        <span class="sticker__clock">{{ timer }}</span>
+      </div>
+      <div class="sticker sticker--trail">
+        <span class="kicker">Trail · {{ trail.distance }} km · {{ trail.elevation }} m D+</span>
+        <span class="sticker__effort">{{ trail.kmEffort }} km-effort</span>
+        <span class="sticker__sub">≈ {{ trail.duration }} de course</span>
+      </div>
+      <div class="sticker-round">100 %<br />local</div>
+    </div>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>{{ marquee }}</span>
+      <span>{{ marquee }}</span>
+    </div>
+  </div>
+</section>

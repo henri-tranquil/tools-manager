@@ -1,0 +1,61 @@
+<section class="works" [id]="id" aria-labelledby="realisations-titre">
+  <div class="works__inner">
+    <header class="works__head">
+      <span class="works__num" aria-hidden="true">{{ number() }}</span>
+      <div class="works__intro">
+        <ul class="works__tags" aria-label="Thèmes">
+          <li class="tag">Sites</li>
+          <li class="tag">Applications</li>
+        </ul>
+        <h2 id="realisations-titre" class="works__title">Mes réalisations</h2>
+        <p class="works__desc">
+          Les sites et applications que j'ai conçus et développés. Chacun s'ouvre dans un nouvel
+          onglet.
+        </p>
+      </div>
+    </header>
+
+    <div class="works__grid">
+      @for (work of works; track work.id) {
+        <ng-template #card>
+          <div class="window" [style.background]="work.color">
+            <div class="window__bar">
+              <span class="window__dot window__dot--red"></span>
+              <span class="window__dot window__dot--yellow"></span>
+              <span class="window__dot window__dot--green"></span>
+              <span class="window__url">{{ hostOf(work.url) }}</span>
+            </div>
+            <span class="window__title" aria-hidden="true">{{ work.title }}</span>
+          </div>
+          <div class="work__body">
+            <div class="work__head">
+              <h3 class="work__title">{{ work.title }}</h3>
+              @if (work.url) {
+                <span class="work__arrow" aria-hidden="true">↗</span>
+              }
+            </div>
+            <p>{{ work.description }}</p>
+            @if (work.techs.length) {
+              <ul class="work__techs" aria-label="Technologies">
+                @for (tech of work.techs; track tech) {
+                  <li class="tag">{{ tech }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </ng-template>
+
+        @if (work.url) {
+          <a class="work lift" [href]="work.url" target="_blank" rel="noopener">
+            <ng-container [ngTemplateOutlet]="card" />
+            <span class="visually-hidden">(nouvel onglet)</span>
+          </a>
+        } @else {
+          <article class="work">
+            <ng-container [ngTemplateOutlet]="card" />
+          </article>
+        }
+      }
+    </div>
+  </div>
+</section>

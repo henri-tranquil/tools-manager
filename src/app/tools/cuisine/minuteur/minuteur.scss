@@ -1,0 +1,90 @@
+.minuteur {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: center;
+}
+
+.minuteur__clock {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.minuteur__time {
+  font-family: var(--font-display);
+  font-size: clamp(72px, 12vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+
+  &--done {
+    color: var(--ink);
+    background: var(--coral);
+    padding: 0 12px;
+    border: var(--bw) solid var(--ink);
+    border-radius: var(--radius);
+  }
+}
+
+.minuteur__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.minuteur__start {
+  min-width: 160px;
+}
+
+.minuteur__presets {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.minuteur__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.preset {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: var(--bw-thin) solid var(--ink);
+  border-radius: 10px;
+  background: var(--cream);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &--active,
+  &--active:hover {
+    background: var(--yellow);
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: translate(-2px, -2px);
+  }
+}
+
+.preset__label {
+  font-weight: 700;
+}
+
+.preset__time {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}

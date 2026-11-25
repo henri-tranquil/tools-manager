@@ -1,0 +1,43 @@
+<div class="lh">
+  <div class="lh__summary">
+    <span
+      class="lh__gauge"
+      [attr.data-band]="band()"
+      role="img"
+      [attr.aria-label]="'Score de performance : ' + result().score + ' sur 100'"
+    >
+      {{ result().score }}
+    </span>
+    <span class="lh__verdict">{{ verdict() }}</span>
+    <span class="kicker">Barème Lighthouse 10+, mobile</span>
+  </div>
+
+  <div class="lh__metrics">
+    @for (metric of metrics; track metric.id) {
+      @let score = result().metrics[metric.id];
+      <div class="lh__row">
+        <label class="lh__label" [for]="'lh-' + metric.id">
+          {{ metric.label }}
+          <span class="lh__weight">· {{ metric.weight }} %</span>
+        </label>
+        <span class="lh__input">
+          <input
+            #field
+            class="field field--small"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [id]="'lh-' + metric.id"
+            [value]="inputs()[metric.id]"
+            (input)="update(metric.id, field.value)"
+          />
+          <span class="lh__unit">{{ metric.unit }}</span>
+        </span>
+        <span class="lh__bar" aria-hidden="true">
+          <span class="lh__fill" [attr.data-band]="bandOf(metric)" [style.width.%]="score"></span>
+        </span>
+        <span class="lh__score">{{ score }}</span>
+      </div>
+    }
+  </div>
+</div>

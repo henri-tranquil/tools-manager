@@ -1,0 +1,55 @@
+<header class="header">
+  <div class="header__inner">
+    <a class="header__brand" href="#accueil">
+      <span class="header__logo" aria-hidden="true">
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"
+          />
+        </svg>
+      </span>
+      L'ÉTABLI
+    </a>
+
+    <nav class="header__nav" aria-label="Sections">
+      @for (section of sections(); track section.id) {
+        <a class="header__pill lift" [href]="'#' + section.id" [style.background]="section.color">{{
+          section.title
+        }}</a>
+      }
+      <a class="header__pill header__pill--works lift" [href]="'#' + worksId">Réalisations</a>
+    </nav>
+
+    <button
+      type="button"
+      class="header__search lift"
+      (click)="searchRequested.emit()"
+      aria-keyshortcuts="Control+K Meta+K"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+      </svg>
+      <span class="header__search-label">Rechercher</span>
+      <kbd class="header__kbd">Ctrl K</kbd>
+    </button>
+  </div>
+</header>

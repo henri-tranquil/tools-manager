@@ -1,0 +1,56 @@
+@let t = tool();
+<div
+  class="panel"
+  [id]="'panel-' + t.id"
+  role="region"
+  [attr.aria-labelledby]="'panel-' + t.id + '-titre'"
+>
+  <div class="panel__bar">
+    <div class="panel__heading">
+      <span class="panel__section" [style.background]="section().color">{{ section().title }}</span>
+      <h3 class="panel__title" [id]="'panel-' + t.id + '-titre'">{{ t.title }}</h3>
+    </div>
+    <button type="button" class="panel__close" (click)="closed.emit()">
+      Fermer <span aria-hidden="true">×</span>
+    </button>
+  </div>
+
+  <div class="panel__body">
+    @switch (t.panel) {
+      @case ('minuteur') {
+        @defer {
+          <app-minuteur />
+        } @placeholder {
+          <p class="panel__loading">Chargement…</p>
+        }
+      }
+      @case ('convertisseur') {
+        @defer {
+          <app-convertisseur [pairId]="t.unitPair ?? 'pouces-cm'" />
+        } @placeholder {
+          <p class="panel__loading">Chargement…</p>
+        }
+      }
+      @case ('lighthouse') {
+        @defer {
+          <app-lighthouse />
+        } @placeholder {
+          <p class="panel__loading">Chargement…</p>
+        }
+      }
+      @case ('km-effort') {
+        @defer {
+          <app-km-effort />
+        } @placeholder {
+          <p class="panel__loading">Chargement…</p>
+        }
+      }
+      @default {
+        <div class="panel__todo">
+          <p>{{ t.description }}</p>
+          <span class="panel__badge">En construction</span>
+        </div>
+      }
+    }
+  </div>
+</div>

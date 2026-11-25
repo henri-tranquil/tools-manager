@@ -1,0 +1,121 @@
+.panel {
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: unfold 0.18s ease-out;
+}
+
+@keyframes unfold {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.panel__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: var(--bw) solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.panel__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.panel__section {
+  padding: 2px 10px;
+  border-radius: 999px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.panel__title {
+  font-size: 22px;
+}
+
+.panel__close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: var(--bw-thin) solid var(--paper);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--paper);
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  &:focus-visible {
+    outline-color: var(--paper);
+  }
+
+  span {
+    font-size: 18px;
+    line-height: 1;
+  }
+}
+
+.panel__body {
+  padding: 28px;
+}
+
+.panel__loading {
+  font-family: var(--font-mono);
+}
+
+.panel__todo {
+  margin: -28px;
+  padding: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 500;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 18px,
+    rgb(17 17 17 / 0.06) 18px 36px
+  );
+}
+
+.panel__badge {
+  padding: 6px 14px;
+  border: var(--bw-thin) solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .panel__body {
+    padding: 20px;
+  }
+
+  .panel__todo {
+    margin: -20px;
+    padding: 20px;
+  }
+}

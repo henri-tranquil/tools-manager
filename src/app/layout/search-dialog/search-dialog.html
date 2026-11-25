@@ -1,0 +1,64 @@
+<dialog #dialog class="search" aria-label="Rechercher un outil" (click)="onDialogClick($event)">
+  <div class="search__box">
+    <div class="search__field">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+      </svg>
+      <input
+        #input
+        class="search__input"
+        type="search"
+        placeholder="minuteur, pouces, trail, couleur…"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="search-results"
+        [attr.aria-expanded]="results().length > 0"
+        [attr.aria-activedescendant]="results().length ? 'search-' + results()[active()].key : null"
+        [value]="query()"
+        (input)="onQuery(input.value)"
+        (keydown)="onKeydown($event)"
+      />
+      <button type="button" class="search__esc" (click)="close()">Échap</button>
+    </div>
+
+    @if (results().length) {
+      <ul id="search-results" class="search__results" role="listbox" aria-label="Résultats">
+        @for (item of results(); track item.key; let i = $index) {
+          <li
+            class="result"
+            role="option"
+            [id]="'search-' + item.key"
+            [class.result--active]="i === active()"
+            [attr.aria-selected]="i === active()"
+            (click)="select(item)"
+            (mouseenter)="active.set(i)"
+          >
+            <span class="result__mono" [style.background]="item.color" aria-hidden="true">{{
+              item.mono
+            }}</span>
+            <span class="result__text">
+              <span class="result__title">{{ item.title }}</span>
+              <span class="result__desc">{{ item.description }}</span>
+            </span>
+            <span class="result__section">{{ item.sectionTitle }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="search__empty">Aucun outil ne correspond à « {{ query() }} ».</p>
+    }
+
+    <p class="search__hint" aria-hidden="true">↑ ↓ pour naviguer · Entrée pour ouvrir</p>
+  </div>
+</dialog>

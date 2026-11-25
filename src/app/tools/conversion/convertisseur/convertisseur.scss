@@ -1,0 +1,42 @@
+.conv {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.conv__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.conv__field {
+  flex: 1 1 260px;
+}
+
+.conv__swap {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 10px;
+  border: var(--bw) solid var(--ink);
+  border-radius: 50%;
+  background: var(--yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 24px;
+}
+
+.conv__formula {
+  align-self: flex-start;
+}
+
+@media (max-width: 640px) {
+  .conv__swap {
+    margin: 0 auto;
+    transform: rotate(90deg);
+  }
+}

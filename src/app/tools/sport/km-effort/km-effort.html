@@ -1,0 +1,55 @@
+<div class="effort">
+  <div class="effort__inputs">
+    <label class="label">
+      Distance (km)
+      <input
+        #d
+        class="field"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="distance()"
+        (input)="distance.set(d.value)"
+      />
+    </label>
+    <label class="label">
+      Dénivelé positif (m D+)
+      <input
+        #e
+        class="field"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="elevation()"
+        (input)="elevation.set(e.value)"
+      />
+    </label>
+    <label class="label">
+      Allure sur le plat (min:s / km)
+      <input
+        #p
+        class="field"
+        type="text"
+        autocomplete="off"
+        [value]="pace()"
+        (input)="pace.set(p.value)"
+      />
+    </label>
+  </div>
+
+  <div class="effort__results" aria-live="polite">
+    <div class="result result--wide">
+      <span class="kicker">Effort équivalent</span>
+      <span class="result__big">{{ kmEffort() }} <small>km-effort</small></span>
+      <span class="result__hint">km + D+ / 100</span>
+    </div>
+    <div class="result result--yellow">
+      <span class="kicker">Temps estimé</span>
+      <span class="result__mid">{{ duration() }}</span>
+    </div>
+    <div class="result result--mint">
+      <span class="kicker">Ravito</span>
+      <span class="result__small">{{ water() }} d'eau<br />{{ carbs() }} de glucides</span>
+    </div>
+  </div>
+</div>

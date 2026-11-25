@@ -1,0 +1,30 @@
+<div class="conv">
+  <div class="conv__row">
+    <label class="label conv__field">
+      {{ pair().labelA }}
+      <input
+        #a
+        class="field field--big"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="valueA()"
+        (input)="onA(a.value)"
+      />
+    </label>
+    <span class="conv__swap" aria-hidden="true">⇄</span>
+    <label class="label conv__field">
+      {{ pair().labelB }}
+      <input
+        #b
+        class="field field--big field--mint"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="valueB()"
+        (input)="onB(b.value)"
+      />
+    </label>
+  </div>
+  <p class="tag conv__formula">{{ pair().formula }}</p>
+</div>
