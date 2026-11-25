@@ -21,6 +21,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Score Lighthouse',
         description: 'Recalcule le score de performance à partir des métriques.',
         mono: 'LH',
+        about:
+          "Analysez la performance d'une page web avec Lighthouse : score sur 100, LCP, CLS, TBT, FCP et Speed Index, ou recalculez le score à partir de vos métriques.",
         type: 'internal',
         panel: 'lighthouse',
       },
@@ -29,6 +31,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Budget de poids',
         description: "Temps de chargement d'une page selon le réseau : 3G, 4G, fibre.",
         mono: 'kB',
+        about:
+          "Estimez le temps de chargement d'une page selon son poids et le réseau (3G, 4G, ADSL, fibre), et le poids maximal pour tenir un objectif de vitesse.",
         type: 'internal',
         panel: 'budget-poids',
       },
@@ -37,6 +41,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'px ↔ rem',
         description: 'Conversion selon la taille de police racine.',
         mono: 'rem',
+        about:
+          'Convertissez des pixels en rem et inversement selon la taille de police racine, avec une table des tailles courantes prête à copier dans votre CSS.',
         type: 'internal',
         panel: 'px-rem',
       },
@@ -45,6 +51,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Contraste WCAG',
         description: 'Ratio texte / fond et niveaux AA / AAA.',
         mono: 'Aa',
+        about:
+          'Vérifiez le contraste entre une couleur de texte et une couleur de fond : ratio WCAG et niveaux AA et AAA pour le texte courant et le grand texte.',
         type: 'internal',
         panel: 'contraste',
       },
@@ -53,6 +61,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Couleurs',
         description: 'HEX ↔ RGB ↔ HSL, avec aperçu et palette.',
         mono: '#',
+        about:
+          'Convertissez une couleur entre HEX, RGB et HSL, et générez ses teintes et nuances en un clic pour construire une palette cohérente.',
         type: 'internal',
         panel: 'couleurs',
       },
@@ -61,6 +71,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Cron en clair',
         description: 'Traduit une expression cron en français.',
         mono: '*/5',
+        about:
+          'Traduisez une expression cron en français clair et affichez ses prochaines exécutions. Gère les intervalles, les listes, les pas et les macros @daily.',
         type: 'internal',
         panel: 'cron',
       },
@@ -80,6 +92,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Km-effort trail',
         description: 'Distance + dénivelé → effort, temps et ravito.',
         mono: 'D+',
+        about:
+          "Calculez le kilomètre-effort d'un trail à partir de la distance et du dénivelé positif, puis le temps de course estimé et l'eau et les glucides à prévoir.",
         type: 'internal',
         panel: 'km-effort',
       },
@@ -88,6 +102,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Allure ↔ vitesse',
         description: 'min/km ↔ km/h et temps de passage.',
         mono: 'km/h',
+        about:
+          'Convertissez une allure de course en min/km en vitesse en km/h, et obtenez les temps de passage sur 5 km, 10 km, semi-marathon et marathon.',
         type: 'internal',
         panel: 'allure',
       },
@@ -96,6 +112,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Temps de rando',
         description: 'Durée de marche selon distance et dénivelé (DIN 33466).',
         mono: 'h:m',
+        about:
+          "Estimez la durée d'une randonnée selon la distance, la montée et la descente avec la norme DIN 33466, pauses comprises.",
         type: 'internal',
         panel: 'temps-rando',
       },
@@ -104,6 +122,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Développement vélo',
         description: 'Plateau, pignon, roue → mètres par tour et vitesse.',
         mono: '52/11',
+        about:
+          "Calculez le développement d'un vélo selon le plateau, le pignon et la roue, et la vitesse obtenue à chaque cadence de pédalage.",
         type: 'internal',
         panel: 'developpement-velo',
       },
@@ -112,6 +132,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Zones cardio',
         description: "Zones d'entraînement depuis la FC max et la FC de repos.",
         mono: 'FC',
+        about:
+          'Calculez vos cinq zones de fréquence cardiaque avec la méthode de Karvonen, à partir de la FC max et de la FC de repos.',
         type: 'internal',
         panel: 'zones-cardio',
       },
@@ -120,6 +142,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Ravitaillement',
         description: 'Eau, sel et glucides à emporter selon la durée.',
         mono: 'H₂O',
+        about:
+          "Planifiez l'eau, le sodium et les glucides à emporter pour un effort d'endurance selon sa durée et la chaleur.",
         type: 'internal',
         panel: 'ravitaillement',
       },
@@ -138,6 +162,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Minuteur',
         description: 'Préréglages œufs, pâtes, riz, thé.',
         mono: "6'",
+        about:
+          "Minuteur de cuisine avec préréglages : œuf à la coque, œuf mollet, œuf dur, pâtes, riz et thé. Un bip prévient quand c'est prêt.",
         type: 'internal',
         panel: 'minuteur',
       },
@@ -146,6 +172,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Mesures',
         description: "Tasses et cuillères en grammes, selon l'ingrédient.",
         mono: 'cup',
+        about:
+          "Convertissez les tasses (cups) et cuillères des recettes américaines en grammes et en millilitres selon l'ingrédient : farine, sucre, beurre…",
         type: 'internal',
         panel: 'mesures',
       },
@@ -154,6 +182,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Portions',
         description: 'Recalcule une recette pour 2, 4 ou 10 personnes.',
         mono: '×2',
+        about:
+          'Adaptez une recette au nombre de personnes : collez la liste des ingrédients et toutes les quantités sont recalculées, fractions comprises.',
         type: 'internal',
         panel: 'portions',
       },
@@ -162,6 +192,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Taille du moule',
         description: "Adapte les quantités d'un moule rond à un carré.",
         mono: 'Ø',
+        about:
+          "Adaptez les quantités d'une recette à la taille de votre moule : rond, carré ou rectangulaire, le coefficient est calculé à partir des surfaces.",
         type: 'internal',
         panel: 'taille-moule',
       },
@@ -170,6 +202,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Pourcentage du boulanger',
         description: "Farine, eau, sel, levain : l'hydratation d'une pâte.",
         mono: '%',
+        about:
+          "Calculez une pâte à pain avec le pourcentage du boulanger : eau, sel, levain et levure à partir de la farine, ou d'un poids de pâte visé.",
         type: 'internal',
         panel: 'pourcentage-boulanger',
       },
@@ -178,6 +212,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Recettes favorites',
         description: 'Votre carnet de liens vers des recettes, gardé sur cet appareil.',
         mono: 'Re',
+        about:
+          'Gardez vos liens de recettes favorites dans un carnet personnel, enregistré uniquement dans votre navigateur.',
         type: 'internal',
         panel: 'recettes',
       },
@@ -196,6 +232,8 @@ export const SECTIONS: readonly Section[] = [
         title: "Angle d'onglet",
         description: 'Angle de coupe pour un cadre à n côtés.',
         mono: '45°',
+        about:
+          "Trouvez l'angle de coupe d'onglet pour un cadre à n côtés et la longueur des montants et de baguette d'un cadre rectangulaire.",
         type: 'internal',
         panel: 'angle-onglet',
       },
@@ -204,6 +242,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Débit de planches',
         description: 'Liste de coupes optimisée pour limiter les chutes.',
         mono: 'cut',
+        about:
+          "Optimisez le débit de vos planches : saisissez les pièces à couper, l'outil répartit les coupes en comptant le trait de scie pour limiter les chutes.",
         type: 'internal',
         panel: 'debit-planches',
       },
@@ -212,6 +252,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Métrage de tissu',
         description: 'Longueur à acheter selon le patron et la laize.',
         mono: 'm',
+        about:
+          'Calculez le métrage de tissu à acheter selon la laize et les pièces du patron, avec ou sans rotation des pièces et une marge de sécurité.',
         type: 'internal',
         panel: 'metrage-tissu',
       },
@@ -220,6 +262,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Cyanotype',
         description: "Dosage des solutions A et B, minuteur d'exposition aux UV.",
         mono: 'UV',
+        about:
+          "Préparez les solutions A et B du cyanotype selon la surface à enduire, puis lancez un minuteur d'exposition adapté aux conditions de lumière.",
         type: 'internal',
         panel: 'cyanotype',
       },
@@ -228,6 +272,8 @@ export const SECTIONS: readonly Section[] = [
         title: "Nombre d'or",
         description: 'Proportions harmonieuses pour un cadre ou un motif.',
         mono: 'φ',
+        about:
+          "Divisez une longueur selon le nombre d'or (φ ≈ 1,618) et trouvez les proportions d'un rectangle d'or pour un cadre, un meuble ou un motif.",
         type: 'internal',
         panel: 'nombre-or',
       },
@@ -236,6 +282,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Niveau à bulle',
         description: "Utilise le capteur d'inclinaison du téléphone.",
         mono: '0°',
+        about:
+          "Transformez votre téléphone en niveau à bulle grâce à son capteur d'inclinaison, avec mise à zéro pour compenser une coque.",
         type: 'internal',
         panel: 'niveau',
       },
@@ -255,6 +303,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Longueurs',
         description: 'Pouces ↔ centimètres',
         mono: 'in',
+        about:
+          'Convertissez des pouces (inches) en centimètres et inversement : 1 in = 2,54 cm. Pratique pour les patrons, écrans et plans américains.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'pouces-cm',
@@ -264,6 +314,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Distances',
         description: 'Miles ↔ kilomètres',
         mono: 'mi',
+        about:
+          'Convertissez des miles en kilomètres et inversement : 1 mile = 1,609 km. Pour les courses, itinéraires et compteurs anglo-saxons.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'miles-km',
@@ -273,6 +325,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Poids',
         description: 'Livres ↔ kilogrammes',
         mono: 'lb',
+        about:
+          'Convertissez des livres (lb) en kilogrammes et inversement : 1 lb = 0,454 kg. Pour les recettes, charges et équipements.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'livres-kg',
@@ -282,6 +336,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Onces',
         description: 'Onces ↔ grammes',
         mono: 'oz',
+        about:
+          'Convertissez des onces (oz) en grammes et inversement : 1 oz = 28,35 g. Indispensable pour les recettes américaines.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'onces-g',
@@ -291,6 +347,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Températures',
         description: 'Fahrenheit ↔ Celsius',
         mono: '°F',
+        about:
+          'Convertissez des degrés Fahrenheit en Celsius et inversement, par exemple 350 °F ≈ 177 °C pour régler un four.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'fahrenheit-celsius',
@@ -300,6 +358,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Volumes',
         description: 'Gallons US ↔ litres',
         mono: 'gal',
+        about:
+          'Convertissez des gallons américains en litres et inversement : 1 gallon US = 3,785 L.',
         type: 'internal',
         panel: 'convertisseur',
         unitPair: 'gallons-litres',
@@ -318,6 +378,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Pomodoro',
         description: '25 minutes de travail, 5 minutes de pause.',
         mono: '25',
+        about:
+          'Minuteur Pomodoro : 25 minutes de travail, 5 minutes de pause et une pause longue toutes les 4 séances, avec des durées réglables.',
         type: 'internal',
         panel: 'pomodoro',
       },
@@ -326,6 +388,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Chronomètre',
         description: 'Avec tours et temps intermédiaires.',
         mono: '0:00',
+        about:
+          'Chronomètre au centième avec tours et temps intermédiaires ; le meilleur tour est mis en évidence.',
         type: 'internal',
         panel: 'chronometre',
       },
@@ -334,6 +398,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Règle de trois',
         description: "Trouve la valeur manquante d'une proportion.",
         mono: '÷',
+        about:
+          "Calculez une règle de trois en un instant : trouvez la valeur manquante d'une proportion, pour une recette, un prix ou une échelle.",
         type: 'internal',
         panel: 'regle-de-trois',
       },
@@ -342,6 +408,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Mot de passe',
         description: 'Génère des mots de passe solides, localement.',
         mono: '***',
+        about:
+          "Générez des mots de passe solides et aléatoires dans votre navigateur : longueur, majuscules, chiffres, symboles et estimation de l'entropie.",
         type: 'internal',
         panel: 'mot-de-passe',
       },
@@ -350,6 +418,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'Tirage au sort',
         description: 'Dé, pile ou face, un nom au hasard.',
         mono: '?',
+        about:
+          "Tirez au sort en toute équité : lancer de dés, pile ou face, nombre aléatoire entre deux bornes ou noms tirés d'une liste.",
         type: 'internal',
         panel: 'tirage-au-sort',
       },
@@ -358,6 +428,8 @@ export const SECTIONS: readonly Section[] = [
         title: 'QR code',
         description: 'Transforme un lien ou un texte en QR code.',
         mono: 'QR',
+        about:
+          "Créez un QR code à partir d'un lien ou d'un texte, choisissez le niveau de correction d'erreur et téléchargez-le en SVG ou en PNG.",
         type: 'internal',
         panel: 'qr-code',
       },

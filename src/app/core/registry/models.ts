@@ -11,10 +11,15 @@ export type { ToolPanel };
 export type ToolType = 'internal' | 'external' | 'link';
 
 export interface Tool {
-  /** Identifiant unique sur tout le site : il sert dans l'URL (`?outil=`). */
+  /** Identifiant unique sur tout le site : il donne l'URL de l'outil (`/outils/<id>/`). */
   readonly id: string;
   readonly title: string;
   readonly description: string;
+  /**
+   * Présentation de l'outil (≤ 160 caractères) : texte de la page `/outils/<id>/`,
+   * meta description et données structurées. C'est le contenu que les moteurs indexent.
+   */
+  readonly about?: string;
   /** Texte très court affiché dans la vignette (« LH », « D+ », « °F »…). */
   readonly mono: string;
   readonly type: ToolType;

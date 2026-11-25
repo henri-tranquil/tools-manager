@@ -10,7 +10,7 @@ Le site a deux publics :
 - **le propriétaire**, qui s'en sert au quotidien (sport, cuisine, atelier, développement) ;
 - **les visiteurs et recruteurs** : c'est une vitrine. La qualité visuelle et la finition comptent autant que les fonctionnalités.
 
-Stack : Angular 22 (zoneless, composants standalone, signals, `@defer`, `OnPush` partout), SCSS, Vitest via `ng test`, polices auto-hébergées avec Fontsource (déclarées dans `angular.json` → `styles`). Il n'y a pas de routeur.
+Stack : Angular 22 (zoneless, composants standalone, signals, `OnPush` partout), **prérendu statique** (`@angular/ssr`, `outputMode: "static"`, pas de serveur), hydratation avec rejeu d'événements, SCSS, Vitest via `ng test`, polices auto-hébergées avec Fontsource (déclarées dans `angular.json` → `styles`).
 
 ## Commandes
 
@@ -20,10 +20,10 @@ npm test                  # Vitest en mode watch
 npm run test:ci           # une seule passe (utilisé par la CI)
 npx ng test --watch=false --include src/app/tools/dev/lighthouse/lighthouse-score.spec.ts   # un seul fichier
 npm run build             # build de production
-npm run build:pages       # build pour GitHub Pages en local (sans clé PageSpeed)
+npm run build:pages       # build GitHub Pages en local (prérendu + sitemap.xml, sans clé PageSpeed)
 ```
 
-Le déploiement passe par `.github/workflows/deploy.yml` : à chaque push sur `main`, il lance `test:ci`, construit avec `--base-href /tools-manager/` et `--define PSI_API_KEY=…` (secret de dépôt `PAGESPEED_API_KEY`, facultatif), copie `index.html` en `404.html`, puis publie `dist/tools-manager/browser` sur GitHub Pages (source de Pages : « GitHub Actions », déjà activée).
+Le déploiement passe par `.github/workflows/deploy.yml` : à chaque push sur `main`, il lance `test:ci`, construit avec `--base-href /tools-manager/` et `--define PSI_API_KEY=…` (secret de dépôt `PAGESPEED_API_KEY`, facultatif), génère `sitemap.xml` (`scripts/generate-sitemap.mjs`, à partir des pages réellement prérendues), vérifie le prérendu, puis publie `dist/tools-manager/browser` sur GitHub Pages (source de Pages : « GitHub Actions », déjà activée).
 
 ## Règle absolue : aucune donnée personnelle
 
@@ -50,6 +50,19 @@ Chaque entrée d'une section appartient à l'un de ces trois types. Toute l'arch
 
 Les projets de la section « Mes réalisations » sont de type `external`, accompagnés de métadonnées de portfolio : description, capture d'écran, technologies, URL.
 
+## Référencement (SEO)
+
+Le site est une seule page, mais **chaque outil a sa propre URL indexable** : `/outils/<id>/`.
+
+- **Routes** (`app.routes.ts`) : `''` et `outils/:outil` affichent tous deux `pages/home/HomePage`. `app.routes.server.ts` les prérend toutes au build (accueil + une page par outil interne, via `getPrerenderParams`) : 37 fichiers HTML complets, lisibles sans JavaScript.
+- **Une page d'outil** ne déplie que cet outil (`OpenTools.openFromUrl`) et a ses propres titre, meta description, canonique, Open Graph/Twitter et JSON-LD (`WebApplication` + `BreadcrumbList`). L'accueil publie `WebSite` + `ItemList`. Tout passe par `core/seo.ts` (`homeSeo`, `toolSeo`, service `Seo`), qui fonctionne au prérendu comme dans le navigateur ; l'identité du site est dans `core/site.ts`.
+- **Contenu indexé** : le champ `about` de chaque outil (≤ 160 caractères, obligatoire pour un outil interne) est affiché en tête du panneau et sert de meta description. Le rédiger comme une vraie phrase utile, avec les mots que les gens cherchent.
+- **Liens découvrables** : les cartes d'outils sont de vrais `<a href="outils/<id>/">`. Un clic simple déplie sur place (`preventDefault`) ; Ctrl/⌘/clic milieu ouvre la page. Ouvrir/fermer un outil réécrit l'URL avec `Location.replaceState`, sans navigation.
+- **Ancres** : avec `<base href>`, `#section` pointerait vers l'accueil depuis une page d'outil. `HomePage` intercepte les clics sur `a[href^="#"]` et fait défiler sur place. Les anciens liens `?outil=<id>` sont redirigés vers `/outils/<id>`.
+- **Prérendu = pas d'API navigateur au rendu** : les composants d'outils ne sont chargés que côté navigateur (`ToolPanel` : `isPlatformBrowser`). Dans le reste de l'appli, n'accéder à `window`, `localStorage`, etc. que dans `afterNextRender`, des gestionnaires d'événements ou du code d'outil. Une différence de structure entre HTML prérendu et premier rendu client casse l'hydratation.
+- **Fichiers statiques** (`public/`) : `robots.txt`, `404.html` (autonome, `noindex`), `manifest.webmanifest`, `og-image.png` (1200 × 630), icônes. `robots.txt` d'un site de projet GitHub Pages n'est pas lu par les moteurs (il faudrait qu'il soit à la racine du domaine) : le sitemap se soumet dans Google Search Console.
+- **Tests** : `seo.spec.ts` impose des titres, descriptions et URL uniques par page et des longueurs raisonnables ; `app.spec.ts` vérifie qu'une page d'outil ne déplie que son outil et pose sa canonique.
+
 ## Architecture
 
 Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) est la **source unique** :
@@ -60,12 +73,11 @@ Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) e
 
 À partir de ce registre sont générés le menu (`layout/site-header`), les compteurs et les autocollants de l'accueil (`sections/hero`), les sections (`sections/tool-section`), les réalisations (`sections/realisations`) et la palette de recherche (`layout/search-dialog`). `tools.registry.spec.ts` vérifie la cohérence du registre : identifiants uniques, `defaultOpen` valides, URL présentes, et un panneau chargeable pour chaque outil interne.
 
-- **Une seule page.** `App` empile l'accueil, une `ToolSection` par entrée de `SECTIONS`, puis `Realisations`. Les liens de l'en-tête sont des ancres. Chaque section a `min-height: calc(100svh - var(--header-h))`. Le défilement s'aimante sur les sections grâce à `scroll-snap-type: y proximity` sur `html`. On utilise `proximity` et non `mandatory`, parce qu'un panneau déplié peut dépasser l'écran.
+- **Une seule page.** `App` ne contient qu'un `<router-outlet>` ; `HomePage` empile l'accueil, une `ToolSection` par entrée de `SECTIONS`, puis `Realisations`. Les liens de l'en-tête sont des ancres. Chaque section a `min-height: calc(100svh - var(--header-h))`. Le défilement s'aimante sur les sections grâce à `scroll-snap-type: y proximity` sur `html`. On utilise `proximity` et non `mandatory`, parce qu'un panneau déplié peut dépasser l'écran.
 - **État des outils ouverts : le service `core/open-tools.ts`.**
-  - Il garde au plus un outil ouvert par section, dans un signal.
-  - Au démarrage, il ouvre le `defaultOpen` de chaque section, puis l'outil donné par `?outil=<id>` s'il y en a un.
-  - Il écrit l'outil ouvert dans l'URL avec `history.replaceState`, sans navigation.
-  - `App` fait défiler jusqu'à la section d'un lien direct, et gère le raccourci `Ctrl/⌘ K`.
+  - Il garde au plus un outil ouvert par section, dans un signal. Sur l'accueil, les `defaultOpen` sont dépliés ; sur `/outils/<id>`, seul cet outil l'est.
+  - `current` donne l'outil de la page courante (pour les métadonnées) ; ouvrir/fermer met à jour l'URL avec `Location.replaceState`.
+  - `HomePage` lit l'outil de l'URL (entrée `outil`, liée par `withComponentInputBinding`), fait défiler jusqu'à lui et gère le raccourci `Ctrl/⌘ K`.
 - **Panneaux : `sections/tool-panel` + `tools/panels.ts`.**
   - `PANEL_LOADERS` associe chaque clé de panneau à un `import()` dynamique : un chunk par outil, téléchargé à l'ouverture. Le type `ToolPanel` est dérivé de ses clés.
   - `ToolPanel` charge le composant avec `resource()` et l'affiche avec `NgComponentOutlet`. Seul le convertisseur reçoit une entrée (`pairId`, depuis `tool.unitPair`).

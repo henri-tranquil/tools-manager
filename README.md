@@ -8,7 +8,7 @@ l'atelier et le code.
 - **Une seule page**, une section par thème, et les outils se déplient sur place.
 - **Calculs locaux** : aucun compte, aucun serveur, aucun traceur. Seule exception : l'analyse
   Lighthouse d'une URL, qui interroge l'API PageSpeed Insights de Google au clic.
-- **Lien direct vers un outil** : `?outil=<id>` (par ex. `?outil=lighthouse`).
+- **Une URL par outil**, prérendue et indexable : `/outils/<id>/` (par ex. [`/outils/lighthouse/`](https://henri-tranquil.github.io/tools-manager/outils/lighthouse/)), avec sitemap, données structurées et image de partage.
 - **Recherche** avec `Ctrl K` / `⌘ K`.
 
 ## Outils (36)

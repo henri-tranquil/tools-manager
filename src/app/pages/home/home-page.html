@@ -1,6 +1,6 @@
 <a class="skip-link" href="#contenu">Aller au contenu</a>
 <app-site-header [sections]="sections" (searchRequested)="openSearch()" />
-<main id="contenu">
+<main id="contenu" tabindex="-1">
   <app-hero [sections]="sections" />
   @for (section of sections; track section.id; let i = $index) {
     <app-tool-section [section]="section" [index]="i + 1" />

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { OpenTools } from '../../core/open-tools';
 import { Section } from '../../core/registry/models';
+import { toolPath } from '../../core/site';
 import { pad2 } from '../../shared/format';
 import { ToolPanel } from '../tool-panel/tool-panel';
 
@@ -24,7 +25,17 @@ export class ToolSection {
     () => this.section().tools.find((t) => t.id === this.openId()) ?? null,
   );
 
-  protected toggle(toolId: string): void {
+  /** Lien réel vers la page de l'outil (relatif à <base>) : découvrable par les moteurs. */
+  protected toolHref(toolId: string): string {
+    return `${toolPath(toolId)}/`;
+  }
+
+  /** Clic simple : on déplie sur place. Ctrl/⌘/Maj/clic milieu : comportement normal du lien. */
+  protected onToolClick(event: MouseEvent, toolId: string): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
     this.openTools.toggle(this.section().id, toolId);
   }
 

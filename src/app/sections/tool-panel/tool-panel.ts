@@ -1,10 +1,12 @@
-import { NgComponentOutlet } from '@angular/common';
+import { isPlatformBrowser, NgComponentOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
+  PLATFORM_ID,
   resource,
 } from '@angular/core';
 import { Section, Tool } from '../../core/registry/models';
@@ -23,8 +25,11 @@ export class ToolPanel {
   readonly section = input.required<Section>();
   readonly closed = output<void>();
 
+  /** Les outils utilisent les API du navigateur : au prérendu, seul le texte de l'outil est rendu. */
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
   protected readonly component = resource({
-    params: () => this.tool().panel,
+    params: () => (this.isBrowser ? this.tool().panel : undefined),
     loader: ({ params }) => PANEL_LOADERS[params](),
   });
 

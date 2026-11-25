@@ -29,7 +29,13 @@ jobs:
       - run: npx ng build --base-href /tools-manager/ --define "PSI_API_KEY='${PSI_API_KEY}'"
         env:
           PSI_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
-      - run: cp dist/tools-manager/browser/index.html dist/tools-manager/browser/404.html
+      # Pages prérendues (accueil + une par outil) → sitemap.xml. La 404 vient de public/404.html.
+      - run: node scripts/generate-sitemap.mjs
+      - name: Vérifier le prérendu
+        run: |
+          test -f dist/tools-manager/browser/outils/lighthouse/index.html
+          test -f dist/tools-manager/browser/sitemap.xml
+          grep -q 'rel="canonical"' dist/tools-manager/browser/outils/lighthouse/index.html
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/tools-manager/browser

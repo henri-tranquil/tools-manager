@@ -1,41 +1,39 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Location } from '@angular/common';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { findTool, SECTIONS } from './registry/tools.registry';
-
-const URL_PARAM = 'outil';
+import { toolPath } from './site';
 
 /**
  * Outil déplié dans chaque section (au plus un par section).
- * Le dernier outil ouvert est reflété dans l'URL (`?outil=<id>`) pour les liens directs,
- * sans navigation : on reste sur une seule page.
+ * Le dernier outil ouvert donne l'URL de la page (`/outils/<id>`), mise à jour avec
+ * `replaceState` : aucune navigation, on reste sur une seule page.
  */
 @Injectable({ providedIn: 'root' })
 export class OpenTools {
-  /** Section ciblée par un lien direct au chargement, pour y faire défiler la page. */
-  readonly linkedSectionId: string | null;
+  private readonly location = inject(Location);
+  private readonly openBySection = signal<Readonly<Record<string, string>>>(
+    Object.fromEntries(SECTIONS.filter((s) => s.defaultOpen).map((s) => [s.id, s.defaultOpen!])),
+  );
+  /** Outil reflété dans l'URL (page courante), ou null pour l'accueil. */
+  private readonly urlToolId = signal<string | null>(null);
 
-  private readonly openBySection: WritableSignal<Readonly<Record<string, string>>>;
-
-  constructor() {
-    const initial: Record<string, string> = {};
-    for (const section of SECTIONS) {
-      if (section.defaultOpen) {
-        initial[section.id] = section.defaultOpen;
-      }
-    }
-
-    const linked = findTool(new URLSearchParams(window.location.search).get(URL_PARAM));
-    if (linked?.tool.type === 'internal') {
-      initial[linked.section.id] = linked.tool.id;
-      this.linkedSectionId = linked.section.id;
-    } else {
-      this.linkedSectionId = null;
-    }
-
-    this.openBySection = signal<Readonly<Record<string, string>>>(initial);
-  }
+  /** L'outil et la section de la page courante. */
+  readonly current = computed(() => findTool(this.urlToolId()));
 
   openToolId(sectionId: string): string | null {
     return this.openBySection()[sectionId] ?? null;
+  }
+
+  /**
+   * Ouvre l'outil d'une URL (page prérendue ou ancien lien `?outil=`), sans réécrire l'URL.
+   * Seul cet outil est déplié : chaque page d'outil a ainsi un contenu qui lui est propre.
+   */
+  openFromUrl(toolId: string | null | undefined): void {
+    const found = findTool(toolId ?? null);
+    if (found?.tool.type === 'internal') {
+      this.openBySection.set({ [found.section.id]: found.tool.id });
+      this.urlToolId.set(found.tool.id);
+    }
   }
 
   toggle(sectionId: string, toolId: string): void {
@@ -48,7 +46,7 @@ export class OpenTools {
 
   open(sectionId: string, toolId: string): void {
     this.openBySection.update((state) => ({ ...state, [sectionId]: toolId }));
-    this.writeUrl(toolId);
+    this.setUrlTool(toolId);
   }
 
   close(sectionId: string): void {
@@ -58,18 +56,13 @@ export class OpenTools {
       delete next[sectionId];
       return next;
     });
-    if (closing && new URLSearchParams(window.location.search).get(URL_PARAM) === closing) {
-      this.writeUrl(null);
+    if (closing && closing === this.urlToolId()) {
+      this.setUrlTool(null);
     }
   }
 
-  private writeUrl(toolId: string | null): void {
-    const url = new URL(window.location.href);
-    if (toolId) {
-      url.searchParams.set(URL_PARAM, toolId);
-    } else {
-      url.searchParams.delete(URL_PARAM);
-    }
-    window.history.replaceState(window.history.state, '', url);
+  private setUrlTool(toolId: string | null): void {
+    this.urlToolId.set(toolId);
+    this.location.replaceState(toolId ? toolPath(toolId) : '');
   }
 }

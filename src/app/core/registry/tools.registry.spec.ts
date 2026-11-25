@@ -40,6 +40,19 @@ describe('registre des outils', () => {
     }
   });
 
+  it('chaque outil interne a un texte de présentation indexable', () => {
+    for (const tool of allTools.filter((t) => t.type === 'internal')) {
+      expect(tool.about, tool.id).toBeTruthy();
+      expect(tool.about!.length, tool.id).toBeLessThanOrEqual(160);
+    }
+  });
+
+  it('les identifiants d’outils sont utilisables tels quels dans une URL', () => {
+    for (const tool of allTools) {
+      expect(tool.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    }
+  });
+
   it('chaque panneau se charge et fournit un composant', async () => {
     for (const load of Object.values(PANEL_LOADERS)) {
       expect(await load()).toBeTypeOf('function');

@@ -24,13 +24,13 @@
       @for (tool of s.tools; track tool.id) {
         @if (tool.type === 'internal') {
           @let isOpen = openId() === tool.id;
-          <button
-            type="button"
+          <a
             class="tool lift"
+            [href]="toolHref(tool.id)"
             [class.tool--open]="isOpen"
             [attr.aria-expanded]="isOpen"
             [attr.aria-controls]="isOpen ? 'panel-' + tool.id : null"
-            (click)="toggle(tool.id)"
+            (click)="onToolClick($event, tool.id)"
           >
             <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
             <span class="tool__text">
@@ -38,7 +38,7 @@
               <span class="tool__desc">{{ tool.description }}</span>
             </span>
             <span class="tool__sign" aria-hidden="true">{{ isOpen ? '−' : '+' }}</span>
-          </button>
+          </a>
         } @else {
           <a class="tool lift" [href]="tool.url" target="_blank" rel="noopener">
             <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>

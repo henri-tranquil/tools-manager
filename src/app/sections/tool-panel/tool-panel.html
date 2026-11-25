@@ -16,6 +16,9 @@
   </div>
 
   <div class="panel__body">
+    @if (t.about) {
+      <p class="panel__about">{{ t.about }}</p>
+    }
     @if (component.hasValue()) {
       <ng-container *ngComponentOutlet="component.value(); inputs: inputs()" />
     } @else if (component.error()) {

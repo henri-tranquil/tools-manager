@@ -1,0 +1,16 @@
+{
+  "name": "L'Établi — boîte à outils",
+  "short_name": "L'Établi",
+  "description": "Des outils faits main pour le trail, la cuisine, l'atelier et le code.",
+  "lang": "fr",
+  "start_url": "/tools-manager/",
+  "scope": "/tools-manager/",
+  "display": "standalone",
+  "background_color": "#fff4e0",
+  "theme_color": "#ffd23f",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

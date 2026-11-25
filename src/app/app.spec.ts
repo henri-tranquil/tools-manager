@@ -1,45 +1,58 @@
 import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { routes } from './app.routes';
 import { SECTIONS } from './core/registry/tools.registry';
 
-describe('App', () => {
+describe('Page unique', () => {
+  let harness: RouterTestingHarness;
+
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+    TestBed.configureTestingModule({ providers: [provideRouter(routes, withComponentInputBinding())] });
+    harness = await RouterTestingHarness.create();
   });
 
-  it('affiche le titre principal', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const root = fixture.nativeElement as HTMLElement;
+  it('affiche le titre principal et une section par entrée du registre', async () => {
+    await harness.navigateByUrl('/');
+    const root = harness.routeNativeElement as HTMLElement;
     expect(root.querySelector('h1')?.textContent).toContain('faits main');
-  });
-
-  it('rend une section par entrée du registre, plus les réalisations', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const root = fixture.nativeElement as HTMLElement;
     for (const section of SECTIONS) {
       expect(root.querySelector(`section#${section.id}`)).not.toBeNull();
     }
     expect(root.querySelector('section#realisations')).not.toBeNull();
   });
 
-  it('déplie et replie un outil au clic', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const root = fixture.nativeElement as HTMLElement;
-    const card = Array.from(root.querySelectorAll<HTMLButtonElement>('#atelier .tool')).find((b) =>
-      b.textContent?.includes("Angle d'onglet"),
-    );
-    expect(card?.getAttribute('aria-expanded')).toBe('false');
+  it('chaque carte d’outil interne est un vrai lien vers sa page', async () => {
+    await harness.navigateByUrl('/');
+    const root = harness.routeNativeElement as HTMLElement;
+    const card = root.querySelector<HTMLAnchorElement>('a.tool[href="outils/angle-onglet/"]');
+    expect(card).not.toBeNull();
+  });
 
-    card?.click();
-    await fixture.whenStable();
-    expect(card?.getAttribute('aria-expanded')).toBe('true');
+  it('déplie et replie un outil au clic, sans quitter la page', async () => {
+    await harness.navigateByUrl('/');
+    const root = harness.routeNativeElement as HTMLElement;
+    const card = root.querySelector<HTMLAnchorElement>('a.tool[href="outils/angle-onglet/"]')!;
+    expect(card.getAttribute('aria-expanded')).toBe('false');
+
+    card.click();
+    await harness.fixture.whenStable();
+    expect(card.getAttribute('aria-expanded')).toBe('true');
     expect(root.querySelector('#panel-angle-onglet')).not.toBeNull();
 
-    card?.click();
-    await fixture.whenStable();
+    card.click();
+    await harness.fixture.whenStable();
     expect(root.querySelector('#panel-angle-onglet')).toBeNull();
+  });
+
+  it('la page d’un outil ne déplie que cet outil et pose ses métadonnées', async () => {
+    await harness.navigateByUrl('/outils/cron');
+    await harness.fixture.whenStable();
+    const root = harness.routeNativeElement as HTMLElement;
+    expect([...root.querySelectorAll('.panel')].map((p) => p.id)).toEqual(['panel-cron']);
+    expect(document.title).toBe("Cron en clair — Web & dev | L'Établi");
+    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      'https://henri-tranquil.github.io/tools-manager/outils/cron/',
+    );
   });
 });
