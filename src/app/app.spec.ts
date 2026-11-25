@@ -8,7 +8,9 @@ describe('Page unique', () => {
   let harness: RouterTestingHarness;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({ providers: [provideRouter(routes, withComponentInputBinding())] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter(routes, withComponentInputBinding())],
+    });
     harness = await RouterTestingHarness.create();
   });
 
@@ -20,6 +22,25 @@ describe('Page unique', () => {
       expect(root.querySelector(`section#${section.id}`)).not.toBeNull();
     }
     expect(root.querySelector('section#realisations')).not.toBeNull();
+  });
+
+  it('chaque bouton et lien a un nom accessible, même si son texte est masqué sur mobile', async () => {
+    await harness.navigateByUrl('/');
+    const root = harness.routeNativeElement as HTMLElement;
+    const unnamed = [...root.querySelectorAll<HTMLElement>('button, a[href]')].filter((el) => {
+      // Le texte d'un élément masqué en CSS ne compte pas : on exige un aria-label dans ce cas.
+      const visibleText = [...el.childNodes]
+        .filter(
+          (n) =>
+            n.nodeType === Node.TEXT_NODE ||
+            !(n as Element).matches?.('[aria-hidden="true"], .header__search-label, kbd'),
+        )
+        .map((n) => n.textContent ?? '')
+        .join('')
+        .trim();
+      return !el.getAttribute('aria-label')?.trim() && !visibleText;
+    });
+    expect(unnamed.map((el) => el.outerHTML.slice(0, 80))).toEqual([]);
   });
 
   it('chaque carte d’outil interne est un vrai lien vers sa page', async () => {
