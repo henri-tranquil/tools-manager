@@ -376,13 +376,13 @@ input {
     padding: 9px 14px;
     border: 0;
     border-right: var(--bw-thin) solid var(--ink);
+    // Si le contrôle passe à la ligne, un trait sépare les rangées ; les marges négatives
+    // poussent les traits du bord droit et de la dernière rangée hors du cadre (masqués).
+    border-bottom: var(--bw-thin) solid var(--ink);
+    margin: 0 calc(-1 * var(--bw-thin)) calc(-1 * var(--bw-thin)) 0;
     background: transparent;
     font-weight: 700;
     cursor: pointer;
-
-    &:last-child {
-      border-right: 0;
-    }
 
     &[aria-pressed='true'] {
       background: var(--ink);
@@ -391,6 +391,17 @@ input {
 
     &:focus-visible {
       outline-offset: -6px;
+    }
+  }
+
+  /* Variante en grille : cases égales sur toute la largeur ; une dernière case seule s'étire. */
+  &--grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-self: stretch;
+
+    button:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
 }

@@ -27,6 +27,22 @@ describe('registre des outils', () => {
     }
   });
 
+  it('les emplacements à venir ont des identifiants libres (pas encore d’outil, pas de page)', () => {
+    const toolIds = new Set(allTools.map((t) => t.id));
+    const upcoming = SECTIONS.flatMap((s) => s.upcoming ?? []);
+    expect(new Set(upcoming.map((u) => u.id)).size).toBe(upcoming.length);
+    for (const u of upcoming) {
+      expect(toolIds.has(u.id), u.id).toBe(false);
+    }
+  });
+
+  it('la section Japonais sépare exercices, outils et examens', () => {
+    const japonais = SECTIONS.find((s) => s.id === 'japonais')!;
+    const kinds = new Set(japonais.tools.map((t) => t.kind));
+    expect(kinds).toEqual(new Set(['exercice', 'outil', 'examen']));
+    expect(japonais.upcoming?.map((u) => u.mono)).toEqual(['N4', 'N3', 'N2', 'N1']);
+  });
+
   it('les convertisseurs déclarent leur paire d’unités', () => {
     for (const tool of allTools.filter((t) => t.panel === 'convertisseur')) {
       expect(tool.unitPair).toBeTruthy();

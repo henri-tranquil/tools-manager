@@ -1,9 +1,36 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { OpenTools } from '../../core/open-tools';
-import { Section } from '../../core/registry/models';
+import { Section, Tool, ToolKind, UpcomingTool } from '../../core/registry/models';
 import { toolPath } from '../../core/site';
 import { pad2 } from '../../shared/format';
 import { ToolPanel } from '../tool-panel/tool-panel';
+
+interface ToolGroup {
+  readonly kind: ToolKind | null;
+  /** Titre du sous-bloc (absent : section d'un seul tenant). */
+  readonly title: string | null;
+  readonly detail: string;
+  readonly tools: readonly Tool[];
+  readonly upcoming: readonly UpcomingTool[];
+}
+
+const GROUPS: readonly {
+  kind: ToolKind;
+  title: string;
+  detail: (n: number, soon: number) => string;
+}[] = [
+  {
+    kind: 'exercice',
+    title: "S'entraîner",
+    detail: (n) => `${n} exercice${n > 1 ? 's' : ''} · avec score`,
+  },
+  { kind: 'outil', title: 'Outils', detail: (n) => `${n} outil${n > 1 ? 's' : ''} · sans score` },
+  {
+    kind: 'examen',
+    title: 'Examen blanc',
+    detail: (n, soon) => `chronométré${soon ? ` · ${soon} en construction` : ''}`,
+  },
+];
 
 @Component({
   selector: 'app-tool-section',
@@ -24,6 +51,28 @@ export class ToolSection {
   protected readonly openTool = computed(
     () => this.section().tools.find((t) => t.id === this.openId()) ?? null,
   );
+
+  /**
+   * Sous-blocs de la section (exercices, outils, examens) dès qu'un outil déclare sa nature ;
+   * sinon un seul bloc sans titre.
+   */
+  protected readonly groups = computed<readonly ToolGroup[]>(() => {
+    const { tools, upcoming = [] } = this.section();
+    if (!tools.some((t) => t.kind) && !upcoming.length) {
+      return [{ kind: null, title: null, detail: '', tools, upcoming: [] }];
+    }
+    return GROUPS.map((g) => {
+      const own = tools.filter((t) => (t.kind ?? 'outil') === g.kind);
+      const soon = upcoming.filter((u) => u.kind === g.kind);
+      return {
+        kind: g.kind,
+        title: g.title,
+        detail: g.detail(own.length, soon.length),
+        tools: own,
+        upcoming: soon,
+      };
+    }).filter((g) => g.tools.length || g.upcoming.length);
+  });
 
   /** Lien réel vers la page de l'outil (relatif à <base>) : découvrable par les moteurs. */
   protected toolHref(toolId: string): string {

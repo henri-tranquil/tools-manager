@@ -10,6 +10,15 @@ export type { ToolPanel };
  */
 export type ToolType = 'internal' | 'external' | 'link';
 
+/**
+ * Nature d'un outil, pour regrouper une section en sous-blocs :
+ * - `exercice` : on s'entraîne, avec un score ;
+ * - `outil`    : on s'en sert, sans score (valeur par défaut) ;
+ * - `examen`   : épreuve chronométrée.
+ * Une section ne se découpe en sous-blocs que si au moins un de ses outils déclare `kind`.
+ */
+export type ToolKind = 'exercice' | 'outil' | 'examen';
+
 export interface Tool {
   /** Identifiant unique sur tout le site : il donne l'URL de l'outil (`/outils/<id>/`). */
   readonly id: string;
@@ -23,6 +32,7 @@ export interface Tool {
   /** Texte très court affiché dans la vignette (« LH », « D+ », « °F »…). */
   readonly mono: string;
   readonly type: ToolType;
+  readonly kind?: ToolKind;
   /** Composant à déplier, pour les outils `internal` (voir `tools/panels.ts`). */
   readonly panel?: ToolPanel;
   /** Pour le panneau `convertisseur`. */
@@ -41,6 +51,19 @@ export interface Section {
   readonly tools: readonly Tool[];
   /** Outil déplié au chargement, pour mettre en avant les outils vitrines. */
   readonly defaultOpen?: string;
+  /**
+   * Emplacements réservés aux outils à venir : affichés « en construction » dans leur sous-bloc,
+   * sans lien, sans page ni entrée dans la recherche.
+   */
+  readonly upcoming?: readonly UpcomingTool[];
+}
+
+export interface UpcomingTool {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly mono: string;
+  readonly kind: ToolKind;
 }
 
 export interface Work {

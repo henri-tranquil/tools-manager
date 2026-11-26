@@ -439,9 +439,9 @@ export const SECTIONS: readonly Section[] = [
     id: 'japonais',
     title: 'Japonais',
     color: '#FCA5A5',
-    tags: ['Kana', 'Kanji', 'Lecture'],
+    tags: ['Kana', 'Kanji', 'Écoute', 'JLPT'],
     description:
-      "J'apprends le japonais : des petits jeux pour lire les kana et les kanji, s'entraîner à les tracer et décortiquer une phrase.",
+      "J'apprends le japonais : des jeux pour lire les kana et les kanji, des exercices corrigés, de l'écoute et un examen blanc du JLPT N5.",
     defaultOpen: 'quiz-kana',
     tools: [
       {
@@ -452,6 +452,7 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Apprenez les hiragana et les katakana en jouant : un kana s’affiche, tapez sa lecture en rōmaji. Les kana ratés reviennent plus souvent.',
         type: 'internal',
+        kind: 'exercice',
         panel: 'quiz-kana',
       },
       {
@@ -462,6 +463,7 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Entraînez-vous à lire le japonais : transcrivez des phrases en kanji et kana en rōmaji, avec furigana en indice et traduction française.',
         type: 'internal',
+        kind: 'exercice',
         panel: 'lecture',
       },
       {
@@ -472,6 +474,7 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Traduisez des phrases japonaises en français, ou assemblez la phrase japonaise à partir du français : un jeu pour apprendre le vocabulaire et l’ordre des mots.',
         type: 'internal',
+        kind: 'exercice',
         panel: 'jeu-traduction',
       },
       {
@@ -482,7 +485,41 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Révisez les 103 kanji du JLPT N5, le niveau débutant : trouvez leur sens parmi quatre choix ou tapez une lecture on’yomi ou kun’yomi.',
         type: 'internal',
+        kind: 'exercice',
         panel: 'quiz-kanji',
+      },
+      {
+        id: 'exercices-japonais',
+        title: 'Exercices de grammaire',
+        description: 'Particules, conjugaison, nombres : fiches corrigées.',
+        mono: '練',
+        about:
+          'Fiches d’exercices de japonais N5 générées au hasard : particules, conjugaison, compteurs et kanji, corrigées avec la règle et les erreurs classiques.',
+        type: 'internal',
+        kind: 'exercice',
+        panel: 'exercices',
+      },
+      {
+        id: 'ecoute-japonais',
+        title: 'Compréhension orale',
+        description: 'Dictée, son → kana, dialogues et réponses.',
+        mono: '聴',
+        about:
+          'Entraînez votre oreille au japonais : dictée, kana et kanji à reconnaître au son, dialogues et réponses façon JLPT N5, vitesse réglable.',
+        type: 'internal',
+        kind: 'exercice',
+        panel: 'ecoute',
+      },
+      {
+        id: 'jlpt-n5',
+        title: 'Examen blanc JLPT N5',
+        description: 'Les trois épreuves, chronométrées et notées.',
+        mono: 'N5',
+        about:
+          'Passez un examen blanc du JLPT N5 : vocabulaire, grammaire et lecture, écoute, chronométrés et notés sur 180 avec les seuils officiels. Le JLPT expliqué.',
+        type: 'internal',
+        kind: 'examen',
+        panel: 'jlpt',
       },
       {
         id: 'dessin-kana',
@@ -492,6 +529,7 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Dessinez un hiragana ou un katakana à la souris ou au doigt : l’outil le reconnaît, donne un pourcentage de ressemblance et l’ordre des traits.',
         type: 'internal',
+        kind: 'exercice',
         panel: 'dessin',
       },
       {
@@ -502,6 +540,7 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Convertissez le rōmaji en hiragana ou katakana et inversement (Hepburn), avec un tableau des kana cliquable pour écrire en japonais.',
         type: 'internal',
+        kind: 'outil',
         panel: 'romaji-kana',
       },
       {
@@ -512,7 +551,38 @@ export const SECTIONS: readonly Section[] = [
         about:
           'Collez une phrase japonaise : furigana sur les kanji, lecture en rōmaji et sens de chaque mot en français, calculés dans votre navigateur.',
         type: 'internal',
+        kind: 'outil',
         panel: 'traduction',
+      },
+    ],
+    upcoming: [
+      {
+        id: 'jlpt-n4',
+        title: 'Examen blanc JLPT N4',
+        description: 'Niveau élémentaire.',
+        mono: 'N4',
+        kind: 'examen',
+      },
+      {
+        id: 'jlpt-n3',
+        title: 'Examen blanc JLPT N3',
+        description: 'Niveau intermédiaire.',
+        mono: 'N3',
+        kind: 'examen',
+      },
+      {
+        id: 'jlpt-n2',
+        title: 'Examen blanc JLPT N2',
+        description: 'Niveau avancé.',
+        mono: 'N2',
+        kind: 'examen',
+      },
+      {
+        id: 'jlpt-n1',
+        title: 'Examen blanc JLPT N1',
+        description: 'Niveau courant.',
+        mono: 'N1',
+        kind: 'examen',
       },
     ],
   },

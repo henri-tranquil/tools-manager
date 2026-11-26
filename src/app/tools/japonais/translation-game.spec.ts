@@ -1,6 +1,15 @@
 import { PHRASES } from './data/phrases';
 import { parsePhrase } from './phrases';
-import { checkAssembly, checkFrench, chunks, keywords, overlap, tiles } from './translation-game';
+import {
+  analyzeFrench,
+  checkAssembly,
+  checkFrench,
+  chunks,
+  isNegative,
+  keywords,
+  overlap,
+  tiles,
+} from './translation-game';
 
 const phrases = PHRASES.map(parsePhrase);
 const find = (text: string) => phrases.find((p) => p.text === text)!;
@@ -18,6 +27,33 @@ describe('traduction vers le français', () => {
     expect(checkFrench('le japonais', refs)).toBe('close');
     expect(checkFrench('je mange du pain', refs)).toBe('wrong');
     expect(checkFrench('', refs)).toBe('wrong');
+  });
+
+  it('refuse une traduction qui inverse la négation', () => {
+    expect(checkFrench("Je n'aime pas le pain.", ["J'aime le pain."])).toBe('wrong');
+    expect(analyzeFrench("Je n'aime pas le pain.", ["J'aime le pain."]).negation).toBe('added');
+    expect(analyzeFrench("J'aime la viande.", ["Je n'aime pas la viande."]).negation).toBe(
+      'missing',
+    );
+    expect(checkFrench("je n'aime pas la viande", ["Je n'aime pas la viande."])).toBe('ok');
+  });
+
+  it("ne prend pas « n'est-ce pas » pour une négation", () => {
+    expect(isNegative("C'est bon, n'est-ce pas ?")).toBe(false);
+    expect(isNegative("Je n'ai plus faim.")).toBe(true);
+    expect(isNegative('Il ne vient jamais.')).toBe(true);
+  });
+
+  it('accepte les synonymes et les formes conjuguées', () => {
+    expect(checkFrench("C'est délicieux !", ["C'est bon !"])).toBe('ok');
+    expect(checkFrench('Je mange du pain.', ['Manger du pain.'])).toBe('ok');
+  });
+
+  it('dit quels mots importants manquent', () => {
+    const check = analyzeFrench('Le chat', ['Le chat est plus petit que le chien.']);
+    expect(check.verdict).toBe('wrong');
+    expect(check.found).toEqual(['chat']);
+    expect(check.missing).toEqual(['petit', 'chien']);
   });
 
   it('mesure la part des mots clés retrouvés', () => {

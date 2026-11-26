@@ -20,41 +20,62 @@
       <span class="section__count">{{ s.tools.length }} outils</span>
     </header>
 
-    <div class="section__grid">
-      @for (tool of s.tools; track tool.id) {
-        @if (tool.type === 'internal') {
-          @let isOpen = openId() === tool.id;
-          <a
-            class="tool lift"
-            [href]="toolHref(tool.id)"
-            [class.tool--open]="isOpen"
-            [attr.aria-expanded]="isOpen"
-            [attr.aria-controls]="isOpen ? 'panel-' + tool.id : null"
-            (click)="onToolClick($event, tool.id)"
-          >
-            <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
-            <span class="tool__text">
-              <span class="tool__title">{{ tool.title }}</span>
-              <span class="tool__desc">{{ tool.description }}</span>
-            </span>
-            <span class="tool__sign" aria-hidden="true">{{ isOpen ? '−' : '+' }}</span>
-          </a>
-        } @else {
-          <a class="tool lift" [href]="tool.url" target="_blank" rel="noopener">
-            <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
-            <span class="tool__text">
-              <span class="tool__title">{{ tool.title }}</span>
-              <span class="tool__desc">{{ tool.description }}</span>
-            </span>
-            <span class="tool__sign tool__sign--link" aria-hidden="true">↗</span>
-            <span class="visually-hidden">(nouvel onglet)</span>
-          </a>
+    @for (group of groups(); track group.kind) {
+      <div class="group">
+        @if (group.title) {
+          <div class="group__head">
+            <h3 class="group__title">{{ group.title }}</h3>
+            <span class="group__detail">{{ group.detail }}</span>
+          </div>
         }
-      }
-    </div>
-
-    @if (openTool(); as tool) {
-      <app-tool-panel [tool]="tool" [section]="s" (closed)="close()" />
+        <div class="section__grid">
+          @for (tool of group.tools; track tool.id) {
+            @if (tool.type === 'internal') {
+              @let isOpen = openId() === tool.id;
+              <a
+                class="tool lift"
+                [href]="toolHref(tool.id)"
+                [class.tool--open]="isOpen"
+                [attr.aria-expanded]="isOpen"
+                [attr.aria-controls]="isOpen ? 'panel-' + tool.id : null"
+                (click)="onToolClick($event, tool.id)"
+              >
+                <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
+                <span class="tool__text">
+                  <span class="tool__title">{{ tool.title }}</span>
+                  <span class="tool__desc">{{ tool.description }}</span>
+                </span>
+                <span class="tool__sign" aria-hidden="true">{{ isOpen ? '−' : '+' }}</span>
+              </a>
+            } @else {
+              <a class="tool lift" [href]="tool.url" target="_blank" rel="noopener">
+                <span class="tool__mono" aria-hidden="true">{{ tool.mono }}</span>
+                <span class="tool__text">
+                  <span class="tool__title">{{ tool.title }}</span>
+                  <span class="tool__desc">{{ tool.description }}</span>
+                </span>
+                <span class="tool__sign tool__sign--link" aria-hidden="true">↗</span>
+                <span class="visually-hidden">(nouvel onglet)</span>
+              </a>
+            }
+          }
+          @for (soon of group.upcoming; track soon.id) {
+            <div class="tool tool--soon">
+              <span class="tool__mono" aria-hidden="true">{{ soon.mono }}</span>
+              <span class="tool__text">
+                <span class="tool__title">{{ soon.title }}</span>
+                <span class="tool__desc">{{ soon.description }}</span>
+              </span>
+              <span class="tool__soon">En construction</span>
+            </div>
+          }
+        </div>
+        @if (openTool(); as tool) {
+          @if (group.tools.includes(tool)) {
+            <app-tool-panel [tool]="tool" [section]="s" (closed)="close()" />
+          }
+        }
+      </div>
     }
   </div>
 </section>

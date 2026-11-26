@@ -60,6 +60,9 @@ export const PANEL_LOADERS = {
   'jeu-traduction': () =>
     import('./japonais/jeu-traduction/jeu-traduction').then((m) => m.JeuTraduction),
   'quiz-kanji': () => import('./japonais/quiz-kanji/quiz-kanji').then((m) => m.QuizKanji),
+  exercices: () => import('./japonais/exercices/exercices').then((m) => m.Exercices),
+  ecoute: () => import('./japonais/ecoute/ecoute').then((m) => m.Ecoute),
+  jlpt: () => import('./japonais/jlpt/jlpt').then((m) => m.Jlpt),
   dessin: () => import('./japonais/dessin/dessin').then((m) => m.Dessin),
   'romaji-kana': () => import('./japonais/romaji-kana/romaji-kana').then((m) => m.RomajiKana),
   traduction: () => import('./japonais/traduction/traduction').then((m) => m.Traduction),

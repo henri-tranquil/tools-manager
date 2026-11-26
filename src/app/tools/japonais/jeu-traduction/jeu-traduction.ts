@@ -22,7 +22,7 @@ import {
   Score,
   StatsMap,
 } from '../quiz';
-import { checkAssembly, checkFrench, tiles } from '../translation-game';
+import { analyzeFrench, checkAssembly, FrenchCheck, tiles } from '../translation-game';
 
 type Direction = 'ja-fr' | 'fr-ja';
 type Answer = 'write' | 'choice' | 'tiles' | 'romaji';
@@ -60,6 +60,11 @@ const LEVELS: readonly { id: PhraseLevel; label: string }[] = [
 
 const RESULTS: Readonly<Record<string, Result>> = {
   ok: { kind: 'ok', title: '正解 · Bravo', text: 'Bonne traduction.' },
+  negation: {
+    kind: 'wrong',
+    title: 'Sens inversé',
+    text: "Les mots y sont, mais la négation n'est pas la bonne : comparez avec la traduction.",
+  },
   frClose: {
     kind: 'close',
     title: 'Presque',
@@ -151,6 +156,30 @@ const RESULTS: Readonly<Record<string, Result>> = {
     .choice {
       font-size: 16px;
       text-align: left;
+    }
+    .hint {
+      font-weight: 700;
+    }
+    .words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .word {
+      padding: 1px 8px;
+      border: var(--bw-thin) solid var(--ink);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+
+      &--ok {
+        background: var(--mint);
+      }
+      &--ko {
+        background: var(--paper);
+        border-style: dashed;
+      }
     }
   `,
   template: `
@@ -308,6 +337,25 @@ const RESULTS: Readonly<Record<string, Result>> = {
               </p>
               <span class="romaji">{{ phrase().romaji }}</span>
               <strong>« {{ phrase().fr }} »</strong>
+              @if (frenchCheck(); as fc) {
+                @if (fc.negation === 'added') {
+                  <span class="hint">Votre phrase est négative, l'originale ne l'est pas.</span>
+                } @else if (fc.negation === 'missing') {
+                  <span class="hint"
+                    >L'originale est négative (〜ない, 〜ません) : il manque « ne… pas ».</span
+                  >
+                }
+                @if (r.kind !== 'ok' && (fc.found.length || fc.missing.length)) {
+                  <span class="words">
+                    @for (w of fc.found; track w) {
+                      <span class="word word--ok">✓ {{ w }}</span>
+                    }
+                    @for (w of fc.missing; track w) {
+                      <span class="word word--ko">✗ {{ w }}</span>
+                    }
+                  </span>
+                }
+              }
             </div>
           </div>
           <div class="row">
@@ -444,9 +492,9 @@ const RESULTS: Readonly<Record<string, Result>> = {
           </div>
         </div>
         <p class="note">
-          En français, la correction cherche les mots importants : une autre formulation juste passe
-          souvent, et sinon « J'avais bon » la compte. En japonais, l'ordre des compléments peut
-          varier, mais le verbe reste à la fin.
+          En français, la correction cherche les mots importants (synonymes courants compris) et
+          vérifie la négation : une autre formulation juste passe souvent, et sinon « J'avais bon »
+          la compte. En japonais, l'ordre des compléments peut varier, mais le verbe reste à la fin.
         </p>
       </div>
     </div>
@@ -468,6 +516,8 @@ export class JeuTraduction {
   protected readonly answer = signal('');
   protected readonly result = signal<Result | null>(null);
   protected readonly showFurigana = signal(false);
+  /** Détail de la correction d'une traduction libre (mots retrouvés, manquants, négation). */
+  protected readonly frenchCheck = signal<FrenchCheck | null>(null);
   protected readonly options = signal<readonly string[]>([]);
   protected readonly bank = signal<readonly string[]>([]);
   protected readonly chosen = signal<readonly number[]>([]);
@@ -523,6 +573,7 @@ export class JeuTraduction {
     this.chosen.set([]);
     this.picked.set(null);
     this.result.set(null);
+    this.frenchCheck.set(null);
     this.showFurigana.set(false);
     if (focus) {
       queueMicrotask(() => this.answerInput()?.nativeElement.focus());
@@ -539,13 +590,17 @@ export class JeuTraduction {
       return;
     }
     if (this.answerStyle() === 'write') {
-      const verdict = checkFrench(answer, this.phrase().translations);
+      const check = analyzeFrench(answer, this.phrase().translations);
+      const verdict = check.verdict;
+      this.frenchCheck.set(check);
       this.grade(
         verdict === 'ok'
           ? RESULTS['ok']
           : verdict === 'close'
             ? RESULTS['frClose']
-            : RESULTS['wrong'],
+            : check.negation
+              ? RESULTS['negation']
+              : RESULTS['wrong'],
       );
     } else {
       const verdict = checkTranscription(answer, this.phrase());
