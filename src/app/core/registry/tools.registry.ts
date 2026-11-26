@@ -14,7 +14,6 @@ export const SECTIONS: readonly Section[] = [
     tags: ['Performance', 'Accessibilité', 'Front-end'],
     description:
       "Les calculettes que j'ouvre tous les jours en développant : performance, couleurs, unités CSS.",
-    defaultOpen: 'lighthouse',
     tools: [
       {
         id: 'lighthouse',
@@ -85,7 +84,6 @@ export const SECTIONS: readonly Section[] = [
     tags: ['Trail', 'Vélo', 'Rando'],
     description:
       'Préparer une sortie : effort, allure, temps de marche, développement et ravitaillement.',
-    defaultOpen: 'km-effort',
     tools: [
       {
         id: 'km-effort',
@@ -155,7 +153,6 @@ export const SECTIONS: readonly Section[] = [
     color: '#FFE066',
     tags: ['Minuteurs', 'Dosages', 'Pain'],
     description: "Pour ne plus jamais rater un œuf mollet, et adapter n'importe quelle recette.",
-    defaultOpen: 'minuteur',
     tools: [
       {
         id: 'minuteur',
@@ -296,7 +293,6 @@ export const SECTIONS: readonly Section[] = [
     tags: ['Impérial', 'Métrique'],
     description:
       "Pour les patrons, recettes et fiches techniques américains : on tape dans un champ, l'autre suit.",
-    defaultOpen: 'pouces-cm',
     tools: [
       {
         id: 'pouces-cm',
@@ -442,7 +438,6 @@ export const SECTIONS: readonly Section[] = [
     tags: ['Kana', 'Kanji', 'Écoute', 'JLPT'],
     description:
       "J'apprends le japonais : des jeux pour lire les kana et les kanji, des exercices corrigés, de l'écoute et un examen blanc du JLPT N5.",
-    defaultOpen: 'quiz-kana',
     tools: [
       {
         id: 'quiz-kana',

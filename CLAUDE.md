@@ -82,7 +82,7 @@ Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) e
 
 - **Une seule page.** `App` ne contient qu'un `<router-outlet>` ; `HomePage` empile l'accueil, une `ToolSection` par entrée de `SECTIONS`, puis `Realisations`. Les liens de l'en-tête sont des ancres. Chaque section a `min-height: calc(100svh - var(--header-h))`. Le défilement s'aimante sur les sections grâce à `scroll-snap-type: y proximity` sur `html`. On utilise `proximity` et non `mandatory`, parce qu'un panneau déplié peut dépasser l'écran.
 - **État des outils ouverts : le service `core/open-tools.ts`.**
-  - Il garde au plus un outil ouvert par section, dans un signal. Sur l'accueil, les `defaultOpen` sont dépliés ; sur `/outils/<id>`, seul cet outil l'est.
+  - Il garde au plus un outil ouvert par section, dans un signal. Sur l'accueil, rien n'est déplié (sauf un éventuel `defaultOpen`) ; sur `/outils/<id>`, seul cet outil l'est.
   - `current` donne l'outil de la page courante (pour les métadonnées) ; ouvrir/fermer met à jour l'URL avec `Location.replaceState`.
   - `HomePage` lit l'outil de l'URL (entrée `outil`, liée par `withComponentInputBinding`), fait défiler jusqu'à lui et gère le raccourci `Ctrl/⌘ K`.
 - **Panneaux : `sections/tool-panel` + `tools/panels.ts`.**
@@ -134,7 +134,7 @@ C'est ce que voient les recruteurs : chaque écran doit être soigné.
 
 ## Catalogue
 
-Tous les outils listés sont de type `internal` et fonctionnent. Les ★ sont ouverts par défaut (`defaultOpen`) et servent de vitrine.
+Tous les outils listés sont de type `internal` et fonctionnent. Sur l'accueil, tous les outils sont repliés : aucune section ne définit `defaultOpen` (le champ reste disponible). Les ★ marquent les outils vitrine.
 
 | # | Section | Couleur | Outils |
 |---|---|---|---|
