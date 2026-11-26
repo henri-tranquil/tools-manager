@@ -15,6 +15,12 @@
   --font-display: 'Archivo Black', 'Arial Black', sans-serif;
   --font-body: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'Space Mono', ui-monospace, monospace;
+  /* Japonais : polices du système pour le texte courant ; Klee One (chargée par les outils, tracé
+     de manuel scolaire fidèle à l'écriture à la main) pour les grands caractères. */
+  --font-jp:
+    'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', Meiryo,
+    'Noto Sans JP', 'Noto Sans CJK JP', 'Klee One', sans-serif;
+  --font-jp-display: 'Klee One', var(--font-jp);
 
   --bw: 4px;
   --bw-thin: 3px;
@@ -516,6 +522,190 @@ select.field {
   padding: 8px 14px;
   font-size: 15px;
   box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Outils de japonais ---------- */
+
+.jp,
+.seg button.jp {
+  font-family: var(--font-jp);
+  font-weight: 400;
+}
+
+ruby rt {
+  font-family: var(--font-jp);
+  font-size: 0.5em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Carte de quiz : le caractère dans un disque façon hinomaru, la consigne en dessous. */
+.flashcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 20px 22px;
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle, rgb(17 17 17 / 0.12) 1.2px, transparent 1.4px) 0 0 / 16px 16px,
+    var(--paper);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+
+  &[data-state='ko'] {
+    animation: flashcard-shake 0.35s ease;
+  }
+}
+
+.flashcard__disc {
+  display: grid;
+  place-items: center;
+  width: clamp(160px, 30vw, 210px);
+  aspect-ratio: 1;
+  border: var(--bw) solid var(--ink);
+  border-radius: 50%;
+  background: var(--coral);
+  transition: background 0.2s ease;
+
+  [data-state='ok'] > & {
+    background: var(--mint);
+  }
+
+  [data-state='ko'] > & {
+    background: var(--cream);
+  }
+}
+
+.flashcard__glyph {
+  font-family: var(--font-jp-display);
+  font-weight: 600;
+  font-size: clamp(76px, 13vw, 116px);
+  line-height: 1;
+
+  &--long {
+    font-size: clamp(48px, 8vw, 72px);
+  }
+}
+
+/* Tampon « correct / raté » posé de travers sur la carte. */
+.stamp {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 12px;
+  border: var(--bw-thin) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  transform: rotate(6deg);
+  animation: stamp-in 0.2s ease-out;
+
+  &--ok {
+    background: var(--mint);
+  }
+
+  &--ko {
+    background: var(--coral);
+  }
+}
+
+/* Jeu : la carte et la saisie à gauche, réglages et scores à droite. */
+.game {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(min(100%, 280px), 1fr);
+  gap: 28px 32px;
+  align-items: start;
+
+  @media (max-width: 760px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.game__play,
+.game__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .field {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choice {
+  padding: 14px 12px;
+  border: var(--bw) solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  font-size: 19px;
+  cursor: pointer;
+
+  &[data-result='ok'] {
+    background: var(--mint);
+  }
+
+  &[data-result='ko'] {
+    background: var(--coral);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  .tile {
+    padding: 12px 14px;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@keyframes flashcard-shake {
+  25% {
+    transform: translateX(-8px) rotate(-1deg);
+  }
+  75% {
+    transform: translateX(8px) rotate(1deg);
+  }
+}
+
+@keyframes stamp-in {
+  from {
+    transform: rotate(6deg) scale(1.8);
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

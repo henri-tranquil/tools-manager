@@ -54,6 +54,13 @@ export const PANEL_LOADERS = {
   'tirage-au-sort': () =>
     import('./quotidien/tirage-au-sort/tirage-au-sort').then((m) => m.TirageAuSort),
   'qr-code': () => import('./quotidien/qr-code/qr-code').then((m) => m.QrCode),
+  // Japonais
+  'quiz-kana': () => import('./japonais/quiz-kana/quiz-kana').then((m) => m.QuizKana),
+  lecture: () => import('./japonais/lecture/lecture').then((m) => m.Lecture),
+  'quiz-kanji': () => import('./japonais/quiz-kanji/quiz-kanji').then((m) => m.QuizKanji),
+  dessin: () => import('./japonais/dessin/dessin').then((m) => m.Dessin),
+  'romaji-kana': () => import('./japonais/romaji-kana/romaji-kana').then((m) => m.RomajiKana),
+  traduction: () => import('./japonais/traduction/traduction').then((m) => m.Traduction),
 } satisfies Record<string, () => Promise<Type<unknown>>>;
 
 export type ToolPanel = keyof typeof PANEL_LOADERS;

@@ -27,6 +27,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "*.dat.gz",
+                "input": "node_modules/@sglkc/kuromoji/dict",
+                "output": "japonais/kuromoji"
               }
             ],
             "styles": [
@@ -36,8 +41,14 @@
               "node_modules/@fontsource/space-grotesk/700.css",
               "node_modules/@fontsource/space-mono/400.css",
               "node_modules/@fontsource/space-mono/700.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "node_modules/@fontsource/klee-one/600.css",
+                "bundleName": "jp-font",
+                "inject": false
+              }
             ],
+            "allowedCommonJsDependencies": ["@sglkc/kuromoji", "async", "doublearray"],
             "server": "src/main.server.ts",
             "outputMode": "static"
           },

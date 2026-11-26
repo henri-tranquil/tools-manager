@@ -11,7 +11,8 @@
 
 .header__inner {
   width: 100%;
-  max-width: calc(var(--content-w) + 48px);
+  /* Plus large que le contenu : huit sections doivent tenir dans le menu. */
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -46,16 +47,21 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   padding: 4px 6px 8px;
-  justify-content: flex-end;
   scrollbar-width: none;
+
+  /* Aligné à droite quand tout tient, défilable depuis le début sinon
+     (avec justify-content: flex-end, les premiers liens sortiraient hors d'atteinte). */
+  > :first-child {
+    margin-left: auto;
+  }
 }
 
 .header__pill {
   flex: none;
-  padding: 6px 13px;
+  padding: 6px 11px;
   border: var(--bw-thin) solid var(--ink);
   border-radius: 999px;
   box-shadow: var(--shadow-sm);
@@ -93,8 +99,21 @@
   background: var(--cream);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1340px) {
   .header__search-label {
+    display: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .header__pill {
+    padding: 5px 9px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1140px) {
+  .header__kbd {
     display: none;
   }
 }

@@ -435,6 +435,77 @@ export const SECTIONS: readonly Section[] = [
       },
     ],
   },
+  {
+    id: 'japonais',
+    title: 'Japonais',
+    color: '#FCA5A5',
+    tags: ['Kana', 'Kanji', 'Lecture'],
+    description:
+      "J'apprends le japonais : des petits jeux pour lire les kana et les kanji, s'entraîner à les tracer et décortiquer une phrase.",
+    defaultOpen: 'quiz-kana',
+    tools: [
+      {
+        id: 'quiz-kana',
+        title: 'Quiz kana',
+        description: 'Un kana, sa lecture : hiragana et katakana.',
+        mono: 'あ',
+        about:
+          'Apprenez les hiragana et les katakana en jouant : un kana s’affiche, tapez sa lecture en rōmaji. Les kana ratés reviennent plus souvent.',
+        type: 'internal',
+        panel: 'quiz-kana',
+      },
+      {
+        id: 'lecture-phrases',
+        title: 'Lecture de phrases',
+        description: 'Transcrire une phrase japonaise en rōmaji.',
+        mono: '読',
+        about:
+          'Entraînez-vous à lire le japonais : transcrivez des phrases en kanji et kana en rōmaji, avec furigana en indice et traduction française.',
+        type: 'internal',
+        panel: 'lecture',
+      },
+      {
+        id: 'quiz-kanji',
+        title: 'Quiz kanji',
+        description: 'Sens et lectures des kanji JLPT N5 et N4.',
+        mono: '漢',
+        about:
+          'Révisez les kanji des niveaux JLPT N5 et N4 : trouvez leur sens parmi quatre choix ou tapez une lecture on’yomi ou kun’yomi.',
+        type: 'internal',
+        panel: 'quiz-kanji',
+      },
+      {
+        id: 'dessin-kana',
+        title: 'Dessin de kana',
+        description: 'Tracez un kana, il devine lequel.',
+        mono: '✎',
+        about:
+          'Dessinez un hiragana ou un katakana à la souris ou au doigt : l’outil le reconnaît, donne un pourcentage de ressemblance et l’ordre des traits.',
+        type: 'internal',
+        panel: 'dessin',
+      },
+      {
+        id: 'romaji-kana',
+        title: 'Rōmaji ↔ kana',
+        description: 'Conversion dans les deux sens et tableau des kana.',
+        mono: 'ka',
+        about:
+          'Convertissez le rōmaji en hiragana ou katakana et inversement (Hepburn), avec un tableau des kana cliquable pour écrire en japonais.',
+        type: 'internal',
+        panel: 'romaji-kana',
+      },
+      {
+        id: 'traduction-japonais',
+        title: 'Traduire une phrase',
+        description: 'Furigana, rōmaji et sens de chaque mot.',
+        mono: '訳',
+        about:
+          'Collez une phrase japonaise : furigana sur les kanji, lecture en rōmaji et sens de chaque mot en français, calculés dans votre navigateur.',
+        type: 'internal',
+        panel: 'traduction',
+      },
+    ],
+  },
 ];
 
 export const WORKS_SECTION_ID = 'realisations';
@@ -481,6 +552,7 @@ export const ACTIVITIES: readonly string[] = [
   'Marqueterie',
   'Cyanotype',
   'Conversions',
+  'Japonais',
   'Open source',
 ];
 
