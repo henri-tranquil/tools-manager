@@ -62,6 +62,7 @@ export const PANEL_LOADERS = {
   'quiz-kanji': () => import('./japonais/quiz-kanji/quiz-kanji').then((m) => m.QuizKanji),
   exercices: () => import('./japonais/exercices/exercices').then((m) => m.Exercices),
   ecoute: () => import('./japonais/ecoute/ecoute').then((m) => m.Ecoute),
+  oral: () => import('./japonais/oral/oral').then((m) => m.Oral),
   jlpt: () => import('./japonais/jlpt/jlpt').then((m) => m.Jlpt),
   dessin: () => import('./japonais/dessin/dessin').then((m) => m.Dessin),
   'romaji-kana': () => import('./japonais/romaji-kana/romaji-kana').then((m) => m.RomajiKana),

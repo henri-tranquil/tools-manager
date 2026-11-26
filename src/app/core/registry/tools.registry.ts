@@ -511,6 +511,17 @@ export const SECTIONS: readonly Section[] = [
         panel: 'ecoute',
       },
       {
+        id: 'oral-japonais',
+        title: 'Expression orale',
+        description: 'Lisez à voix haute : prononciation notée son par son.',
+        mono: '話',
+        about:
+          'Entraînez-vous à parler japonais : lisez une phrase ou un mot à voix haute, la reconnaissance vocale note votre prononciation son par son.',
+        type: 'internal',
+        kind: 'exercice',
+        panel: 'oral',
+      },
+      {
         id: 'jlpt-n5',
         title: 'Examen blanc JLPT N5',
         description: 'Les trois épreuves, chronométrées et notées.',
