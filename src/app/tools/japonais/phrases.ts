@@ -1,4 +1,5 @@
 /** Jeu de lecture : préparation des phrases et vérification de la transcription. */
+import { KANJI } from './data/kanji';
 import type { PhraseLevel, PhraseSource } from './data/phrases';
 import { furigana, RubySegment } from './dictionary';
 import { isKanji, kanaToRomaji, looseRomaji, romajiToKana, soundKey } from './kana';
@@ -29,13 +30,22 @@ export interface Phrase {
 const PARTICLES: Readonly<Record<string, string>> = { は: 'わ', へ: 'え', を: 'お' };
 const PUNCTUATION = /^[。、？！]$/;
 
+/** Le site s'en tient aux kanji du JLPT N5 (niveau débutant). */
+const ALLOWED_KANJI = new Set(KANJI.map((k) => k.k));
+
+/** Le mot contient-il un kanji au-delà du N5 ? Il s'écrit alors en hiragana, comme dans les manuels. */
+export function beyondLevel(surface: string): boolean {
+  return [...surface].some((c) => isKanji(c) && !ALLOWED_KANJI.has(c));
+}
+
 export function parsePhrase(source: PhraseSource, index: number): Phrase {
   const words = source.text.split(/\s+/).map((token): PhraseWord => {
     const particle = token.startsWith('_');
     const raw = particle ? token.slice(1) : token;
     const match = /^([^[]+)\[([^\]]+)](.*)$/.exec(raw);
-    const surface = match ? match[1] + match[3] : raw;
     const reading = match ? match[2] + match[3] : raw;
+    const written = match ? match[1] + match[3] : raw;
+    const surface = beyondLevel(written) ? reading : written;
     const punctuation = PUNCTUATION.test(surface);
     return {
       surface,

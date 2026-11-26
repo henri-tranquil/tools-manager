@@ -8,14 +8,14 @@ type Filter = 'all' | 'kana' | 'kanji';
 let kanaTemplates: Template[] | undefined;
 let kanjiTemplates: Promise<Template[]> | undefined;
 
-/** Modèles des kanji N5/N4, chargés à la demande (≈ 200 ko de tracés). */
+/** Modèles des kanji N5, chargés à la demande (≈ 75 ko de tracés). */
 function loadKanjiTemplates(): Promise<Template[]> {
   kanjiTemplates ??= import('./data/kanji-strokes').then((m) => buildTemplates(m.KANJI_STROKES));
   return kanjiTemplates;
 }
 
 /**
- * Écriture à la main : on trace un caractère (kana ou kanji des niveaux N5/N4), on choisit
+ * Écriture à la main : on trace un caractère (kana ou kanji du niveau N5), on choisit
  * parmi les propositions, et le caractère est émis vers le parent.
  */
 @Component({
@@ -89,7 +89,7 @@ function loadKanjiTemplates(): Promise<Template[]> {
           [attr.aria-pressed]="filter() === 'kanji'"
           (click)="filter.set('kanji')"
         >
-          Kanji N5-N4
+          Kanji N5
         </button>
       </div>
       <span class="kicker">
@@ -121,8 +121,8 @@ function loadKanjiTemplates(): Promise<Template[]> {
         </button>
       </div>
       <p class="note">
-        Reconnaît les {{ kanaCount }} kana et les {{ kanjiCount() || 284 }} kanji des niveaux N5 et
-        N4. Tracés de référence : KanjiVG (CC BY-SA 3.0).
+        Reconnaît les {{ kanaCount }} kana et les {{ kanjiCount() || 103 }} kanji du niveau N5.
+        Tracés de référence : KanjiVG (CC BY-SA 3.0).
       </p>
     </div>
   `,

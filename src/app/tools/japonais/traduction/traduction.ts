@@ -17,6 +17,7 @@ import {
 } from '../dictionary';
 import { cryptoRandomInt } from '../../../shared/random';
 import { PHRASES } from '../data/phrases';
+import { parsePhrase } from '../phrases';
 import { Handwriting } from '../handwriting';
 import { loadJapaneseFont, useSpeech } from '../japanese';
 import { romajiToKana, Script } from '../kana';
@@ -41,11 +42,12 @@ interface TranslatorFactory {
 const LANGS = { sourceLanguage: 'ja', targetLanguage: 'fr' } as const;
 const MAX_LENGTH = 400;
 
+/** Exemples écrits avec les seuls kanji du N5 (le reste en hiragana). */
 const EXAMPLES: readonly string[] = [
-  '私は日本語を勉強しています。',
-  '週末は山を走ります。',
-  'このパンはとても美味しいです。',
-  '明日、友達と京都へ行きたい。',
+  'わたしは日本語をべんきょうしています。',
+  '毎週、山へ行きます。',
+  'このパンはとてもおいしいです。',
+  'あした、友だちと日本の山へ行きたいです。',
 ];
 
 type WritingTool = 'keyboard' | 'draw' | 'romaji';
@@ -398,10 +400,10 @@ export class Traduction {
     this.translation.set('');
   }
 
-  /** Une phrase des jeux de lecture, sans les marques de lecture ([…], _) ni les espaces. */
+  /** Une phrase des jeux de lecture (kanji N5, le reste en hiragana). */
   protected randomPhrase(): void {
-    const { text } = PHRASES[cryptoRandomInt(PHRASES.length)];
-    this.setInput(text.replace(/\[[^\]]*]/g, '').replace(/[_\s]/g, ''));
+    const index = cryptoRandomInt(PHRASES.length);
+    this.setInput(parsePhrase(PHRASES[index], index).text);
   }
 
   protected toggleTool(tool: WritingTool): void {

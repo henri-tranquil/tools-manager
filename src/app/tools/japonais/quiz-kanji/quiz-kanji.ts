@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { cryptoRandomInt } from '../../../shared/random';
 import { readStored, writeStored } from '../../../shared/storage';
-import { Kanji, KANJI, KanjiLevel } from '../data/kanji';
+import { Kanji, KANJI } from '../data/kanji';
 import { loadJapaneseFont, useSpeech } from '../japanese';
 import { kanaToRomaji, matchesReading, toHiragana } from '../kana';
 import {
@@ -22,12 +22,10 @@ import {
   toReview,
 } from '../quiz';
 
-type LevelChoice = KanjiLevel | 'all';
 type Mode = 'meaning' | 'reading';
 type State = 'ask' | 'ok' | 'ko';
 
 interface Settings {
-  readonly level: LevelChoice;
   readonly mode: Mode;
 }
 
@@ -181,7 +179,7 @@ function readingsOf(k: Kanji): string[] {
                 </dd>
               }
               <dt>Traits</dt>
-              <dd>{{ kanji().strokes }} · JLPT {{ kanji().level }}</dd>
+              <dd>{{ kanji().strokes }}</dd>
             </dl>
           </div>
         }
@@ -202,17 +200,7 @@ function readingsOf(k: Kanji): string[] {
       </div>
 
       <div class="game__side">
-        <div class="seg" role="group" aria-label="Niveau JLPT">
-          @for (l of levelChoices; track l.id) {
-            <button
-              type="button"
-              [attr.aria-pressed]="settings().level === l.id"
-              (click)="update({ level: l.id })"
-            >
-              {{ l.label }}
-            </button>
-          }
-        </div>
+        <span class="pill">JLPT N5 · niveau débutant</span>
         <div class="seg" role="group" aria-label="Question">
           <button
             type="button"
@@ -268,15 +256,10 @@ function readingsOf(k: Kanji): string[] {
   `,
 })
 export class QuizKanji {
-  protected readonly levelChoices: readonly { id: LevelChoice; label: string }[] = [
-    { id: 'N5', label: 'N5' },
-    { id: 'N4', label: 'N4' },
-    { id: 'all', label: 'N5 + N4' },
-  ];
   protected readonly speech = useSpeech();
 
   protected readonly settings = signal<Settings>(
-    readStored('japonais:kanji-reglages', { level: 'N5', mode: 'meaning' } as Settings),
+    readStored('japonais:kanji-reglages', { mode: 'meaning' } as Settings),
   );
   private readonly stats = signal<StatsMap>(readStored('japonais:kanji-stats', {}));
   protected readonly score = signal(EMPTY_SCORE);
@@ -286,10 +269,7 @@ export class QuizKanji {
   protected readonly state = signal<State>('ask');
   private readonly picked = signal<string | null>(null);
 
-  protected readonly deck = computed(() => {
-    const level = this.settings().level;
-    return level === 'all' ? KANJI : KANJI.filter((k) => k.level === level);
-  });
+  protected readonly deck = computed(() => KANJI);
   protected readonly precision = computed(() => accuracy(this.score()));
   protected readonly review = computed(() => {
     const inDeck = new Set(this.deck().map((k) => k.k));

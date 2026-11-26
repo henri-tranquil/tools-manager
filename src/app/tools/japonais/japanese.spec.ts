@@ -114,7 +114,7 @@ describe('analyse d’une phrase', () => {
 
 describe('jeu de lecture', () => {
   const phrases = PHRASES.map(parsePhrase);
-  const gakusei = phrases.find((p) => p.text === '私は学生です。')!;
+  const gakusei = phrases.find((p) => p.text === 'わたしは学生です。')!;
 
   it('lit la syntaxe du corpus (furigana, okurigana, particules)', () => {
     expect(gakusei.romaji).toBe('watashi wa gakusei desu.');
@@ -139,6 +139,20 @@ describe('jeu de lecture', () => {
     for (const level of [1, 2, 3]) {
       expect(phrases.filter((p) => p.level === level).length).toBeGreaterThan(40);
     }
+  });
+
+  it('n’utilise que des kanji du N5 : les autres mots passent en hiragana', () => {
+    const n5 = new Set(KANJI.map((k) => k.k));
+    for (const phrase of phrases) {
+      for (const c of phrase.text) {
+        if (isKanji(c)) {
+          expect(n5.has(c), `${phrase.text} : ${c}`).toBe(true);
+        }
+      }
+    }
+    expect(phrases.find((p) => p.text === '日本語をべんきょうしています。')!.romaji).toBe(
+      'nihongo o benkyou shite imasu.',
+    );
   });
 
   it('place les furigana sur les seuls kanji et garde l’écriture d’origine en mode kana', () => {
@@ -166,8 +180,9 @@ describe('jeu de lecture', () => {
 });
 
 describe('données kanji', () => {
-  it('contient les niveaux N5 et N4 avec lectures et sens', () => {
-    expect(KANJI.filter((k) => k.level === 'N5').length).toBeGreaterThan(80);
+  it('contient les kanji du N5 avec lectures et sens', () => {
+    expect(KANJI).toHaveLength(103);
+    expect(KANJI.every((k) => k.level === 'N5')).toBe(true);
     for (const kanji of KANJI) {
       expect(kanji.on.length + kanji.kun.length, kanji.k).toBeGreaterThan(0);
       expect(kanji.meanings.length, kanji.k).toBeGreaterThan(0);

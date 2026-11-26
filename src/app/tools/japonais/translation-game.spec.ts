@@ -12,7 +12,7 @@ describe('traduction vers le français', () => {
   });
 
   it('accepte une traduction proche et reconnaît une réponse partielle', () => {
-    const refs = find('日本語を勉強しています。').translations;
+    const refs = find('日本語をべんきょうしています。').translations;
     expect(checkFrench("j'etudie le japonais", refs)).toBe('ok');
     expect(checkFrench("J'apprends le japonais !", refs)).toBe('ok');
     expect(checkFrench('le japonais', refs)).toBe('close');
@@ -34,18 +34,18 @@ describe('traduction vers le français', () => {
 });
 
 describe('assemblage de la phrase japonaise', () => {
-  const tokyo = find('明日東京へ行きます。');
+  const tokyo = find('あしたとうきょうへ行きます。');
 
   it('rattache les particules au mot qui les précède', () => {
-    expect(chunks(find('私は学生です。'))).toEqual(['私は', '学生', 'です']);
-    expect(chunks(tokyo)).toEqual(['明日', '東京へ', '行きます']);
+    expect(chunks(find('わたしは学生です。'))).toEqual(['わたしは', '学生', 'です']);
+    expect(chunks(tokyo)).toEqual(['あした', 'とうきょうへ', '行きます']);
   });
 
   it('accepte l’ordre modèle, signale un autre ordre possible, refuse le reste', () => {
-    expect(checkAssembly(['明日', '東京へ', '行きます'], tokyo)).toBe('exact');
-    expect(checkAssembly(['東京へ', '明日', '行きます'], tokyo)).toBe('order');
-    expect(checkAssembly(['行きます', '明日', '東京へ'], tokyo)).toBe('wrong');
-    expect(checkAssembly(['明日', '行きます'], tokyo)).toBe('wrong');
+    expect(checkAssembly(['あした', 'とうきょうへ', '行きます'], tokyo)).toBe('exact');
+    expect(checkAssembly(['とうきょうへ', 'あした', '行きます'], tokyo)).toBe('order');
+    expect(checkAssembly(['行きます', 'あした', 'とうきょうへ'], tokyo)).toBe('wrong');
+    expect(checkAssembly(['あした', '行きます'], tokyo)).toBe('wrong');
   });
 
   it('mélange les étiquettes de la phrase avec des intrus', () => {

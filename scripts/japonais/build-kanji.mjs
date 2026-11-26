@@ -1,4 +1,4 @@
-// Génère src/app/tools/japonais/data/kanji.ts (kanji des niveaux JLPT N5 et N4) à partir de
+// Génère src/app/tools/japonais/data/kanji.ts (kanji du niveau JLPT N5, le niveau débutant) à partir de
 // kanjidic2 (jmdict-simplified, fichier « kanjidic2-all »).
 // Usage : node scripts/japonais/build-kanji.mjs <kanjidic2-all-x.y.z.json>
 // KANJIDIC2 © Electronic Dictionary Research and Development Group, CC BY-SA 4.0.
@@ -8,8 +8,8 @@ const file = process.argv[2];
 if (!file) throw new Error('Fichier kanjidic2 manquant');
 const { characters } = JSON.parse(readFileSync(file, 'utf8'));
 
-// Ancien JLPT : niveau 4 ≈ N5, niveau 3 ≈ N4.
-const LEVELS = { 4: 'N5', 3: 'N4' };
+// Ancien JLPT : niveau 4 ≈ N5. Le site s'en tient volontairement au N5.
+const LEVELS = { 4: 'N5' };
 const uniq = (list) => [...new Set(list)];
 
 const rows = characters
@@ -44,7 +44,7 @@ writeFileSync(
 // Source : KANJIDIC2, © Electronic Dictionary Research and Development Group (EDRDG),
 // licence CC BY-SA 4.0 (https://www.edrdg.org/edrdg/licence.html), via jmdict-simplified.
 
-export type KanjiLevel = 'N5' | 'N4';
+export type KanjiLevel = 'N5';
 
 export interface Kanji {
   readonly k: string;
@@ -63,4 +63,4 @@ ${rows.map(line).join('\n')}
 ];
 `,
 );
-console.log(`${rows.length} kanji écrits`, rows.filter((r) => r.level === 'N5').length, 'N5');
+console.log(`${rows.length} kanji N5 écrits`);

@@ -477,10 +477,10 @@ export const SECTIONS: readonly Section[] = [
       {
         id: 'quiz-kanji',
         title: 'Quiz kanji',
-        description: 'Sens et lectures des kanji JLPT N5 et N4.',
+        description: 'Sens et lectures des kanji JLPT N5.',
         mono: '漢',
         about:
-          'Révisez les kanji des niveaux JLPT N5 et N4 : trouvez leur sens parmi quatre choix ou tapez une lecture on’yomi ou kun’yomi.',
+          'Révisez les 103 kanji du JLPT N5, le niveau débutant : trouvez leur sens parmi quatre choix ou tapez une lecture on’yomi ou kun’yomi.',
         type: 'internal',
         panel: 'quiz-kanji',
       },

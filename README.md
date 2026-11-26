@@ -21,7 +21,7 @@ l'atelier, le japonais et le code.
 | Atelier | Angle d'onglet, débit de planches, métrage de tissu, cyanotype, nombre d'or, niveau à bulle |
 | Conversion | in ↔ cm, mi ↔ km, lb ↔ kg, oz ↔ g, °F ↔ °C, gal US ↔ L |
 | Quotidien | Pomodoro, chronomètre, règle de trois, mot de passe, tirage au sort, QR code |
-| Japonais | Quiz kana, lecture de phrases, jeu de traduction japonais ↔ français, quiz kanji (JLPT N5/N4), dessin de kana reconnu à la souris, rōmaji ↔ kana, traduction mot à mot avec furigana (saisie au clavier kana, au dessin ou en rōmaji) |
+| Japonais | Quiz kana, lecture de phrases, jeu de traduction japonais ↔ français, quiz kanji (JLPT N5), dessin de kana reconnu à la souris, rōmaji ↔ kana, traduction mot à mot avec furigana (saisie au clavier kana, au dessin ou en rōmaji) |
 
 ### Clé PageSpeed Insights (facultative)
 
@@ -47,8 +47,8 @@ auto-hébergées via Fontsource.
 Les données sont générées par les scripts de `scripts/japonais/` à partir de sources libres
 (voir l'en-tête de chaque script pour l'usage) :
 
-- tracés des kana et des kanji N5/N4 : [KanjiVG](https://kanjivg.tagaini.net), © Ulrich Apel, CC BY-SA 3.0 ;
-- kanji N5/N4 et dictionnaire (`public/japonais/dico.json`) : KANJIDIC2 et JMdict, © EDRDG,
+- tracés des kana et des kanji N5 : [KanjiVG](https://kanjivg.tagaini.net), © Ulrich Apel, CC BY-SA 3.0 ;
+- kanji N5 et dictionnaire (`public/japonais/dico.json`) : KANJIDIC2 et JMdict, © EDRDG,
   CC BY-SA 4.0, via [jmdict-simplified](https://github.com/scriptin/jmdict-simplified) ;
 - découpage des phrases : [kuromoji](https://github.com/sglkc/kuromoji.js) (Apache 2.0) et son
   dictionnaire IPAdic, copié dans le build depuis `node_modules`.
