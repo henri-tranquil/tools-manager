@@ -1,7 +1,7 @@
 /** Jeu de lecture : préparation des phrases et vérification de la transcription. */
 import type { PhraseLevel, PhraseSource } from './data/phrases';
 import { furigana, RubySegment } from './dictionary';
-import { kanaToRomaji, looseRomaji, romajiToKana, soundKey } from './kana';
+import { isKanji, kanaToRomaji, looseRomaji, romajiToKana, soundKey } from './kana';
 
 export interface PhraseWord {
   readonly surface: string;
@@ -17,6 +17,8 @@ export interface Phrase {
   readonly id: string;
   readonly level: PhraseLevel;
   readonly fr: string;
+  /** Traduction de référence et variantes acceptées. */
+  readonly translations: readonly string[];
   readonly text: string;
   readonly words: readonly PhraseWord[];
   /** La phrase écrite uniquement en kana (pour le mode sans kanji). */
@@ -47,9 +49,13 @@ export function parsePhrase(source: PhraseSource, index: number): Phrase {
     id: `p${index}`,
     level: source.level,
     fr: source.fr,
+    translations: [source.fr, ...(source.alts ?? [])],
     text: words.map((w) => w.surface).join(''),
     words,
-    kana: words.map((w) => (w.punctuation ? w.surface : w.written)).join(''),
+    // Sans kanji, on garde l'écriture d'origine (こんにちは, katakana) ; sinon la lecture.
+    kana: words
+      .map((w) => (w.punctuation || ![...w.surface].some(isKanji) ? w.surface : w.written))
+      .join(''),
     romaji: words
       .map((w) => (w.punctuation ? kanaToRomaji(w.surface) : ` ${kanaToRomaji(w.spoken)}`))
       .join('')

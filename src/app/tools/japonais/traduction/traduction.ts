@@ -15,6 +15,8 @@ import {
   Tokenizer,
   Word,
 } from '../dictionary';
+import { cryptoRandomInt } from '../../../shared/random';
+import { PHRASES } from '../data/phrases';
 import { Handwriting } from '../handwriting';
 import { loadJapaneseFont, useSpeech } from '../japanese';
 import { romajiToKana, Script } from '../kana';
@@ -228,6 +230,9 @@ const SOURCE_LABELS: Readonly<Record<string, string>> = {
             {{ e }}
           </button>
         }
+        <button type="button" class="btn btn--small btn--yellow lift" (click)="randomPhrase()">
+          Phrase au hasard ↻
+        </button>
       </div>
 
       @switch (loadState()) {
@@ -391,6 +396,12 @@ export class Traduction {
   protected setInput(value: string): void {
     this.input.set(value.slice(0, MAX_LENGTH));
     this.translation.set('');
+  }
+
+  /** Une phrase des jeux de lecture, sans les marques de lecture ([…], _) ni les espaces. */
+  protected randomPhrase(): void {
+    const { text } = PHRASES[cryptoRandomInt(PHRASES.length)];
+    this.setInput(text.replace(/\[[^\]]*]/g, '').replace(/[_\s]/g, ''));
   }
 
   protected toggleTool(tool: WritingTool): void {

@@ -11,7 +11,7 @@ l'atelier, le japonais et le code.
 - **Une URL par outil**, prérendue et indexable : `/outils/<id>/` (par ex. [`/outils/lighthouse/`](https://henri-tranquil.github.io/tools-manager/outils/lighthouse/)), avec sitemap, données structurées et image de partage.
 - **Recherche** avec `Ctrl K` / `⌘ K`.
 
-## Outils (42)
+## Outils (43)
 
 | Section | Outils |
 |---|---|
@@ -21,7 +21,7 @@ l'atelier, le japonais et le code.
 | Atelier | Angle d'onglet, débit de planches, métrage de tissu, cyanotype, nombre d'or, niveau à bulle |
 | Conversion | in ↔ cm, mi ↔ km, lb ↔ kg, oz ↔ g, °F ↔ °C, gal US ↔ L |
 | Quotidien | Pomodoro, chronomètre, règle de trois, mot de passe, tirage au sort, QR code |
-| Japonais | Quiz kana, lecture de phrases, quiz kanji (JLPT N5/N4), dessin de kana reconnu à la souris, rōmaji ↔ kana, traduction mot à mot avec furigana (saisie au clavier kana, au dessin ou en rōmaji) |
+| Japonais | Quiz kana, lecture de phrases, jeu de traduction japonais ↔ français, quiz kanji (JLPT N5/N4), dessin de kana reconnu à la souris, rōmaji ↔ kana, traduction mot à mot avec furigana (saisie au clavier kana, au dessin ou en rōmaji) |
 
 ### Clé PageSpeed Insights (facultative)
 

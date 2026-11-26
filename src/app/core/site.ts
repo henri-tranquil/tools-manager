@@ -3,7 +3,7 @@ export const SITE_URL = 'https://henri-tranquil.github.io/tools-manager/';
 export const SITE_NAME = "L'Établi";
 export const SITE_TITLE = "L'Établi — boîte à outils & portfolio d'un dev bricoleur";
 export const SITE_DESCRIPTION =
-  "42 outils gratuits faits main pour le trail, la cuisine, l'atelier, le japonais et le code : Lighthouse, km-effort, minuteur, quiz kana… Sans compte.";
+  "43 outils gratuits faits main pour le trail, la cuisine, l'atelier, le japonais et le code : Lighthouse, km-effort, minuteur, quiz kana… Sans compte.";
 export const OG_IMAGE = `${SITE_URL}og-image.png`;
 
 /** Chemin (relatif à la base) de la page d'un outil. */

@@ -19,15 +19,20 @@ export function weightOf(stats: CardStats | undefined): number {
   return Math.min(12, Math.max(1, 2 + 3 * stats.ko - stats.ok));
 }
 
-/** Tire une carte en favorisant les plus ratées, sans répéter la précédente. */
+/**
+ * Tire une carte en favorisant les plus ratées, sans reprendre les cartes récentes
+ * (`recent` : la précédente, ou un historique des dernières tirées).
+ */
 export function pickWeighted<T>(
   items: readonly T[],
   key: (item: T) => string,
   stats: StatsMap,
   random: RandomInt,
-  previous?: string,
+  recent?: string | readonly string[],
 ): T | undefined {
-  const pool = items.length > 1 ? items.filter((i) => key(i) !== previous) : items;
+  const avoid = new Set(typeof recent === 'string' ? [recent] : (recent ?? []));
+  const fresh = items.filter((i) => !avoid.has(key(i)));
+  const pool = fresh.length ? fresh : items;
   if (!pool.length) {
     return undefined;
   }
@@ -40,6 +45,12 @@ export function pickWeighted<T>(
     }
   }
   return pool[pool.length - 1];
+}
+
+/** Ajoute `key` à l'historique en gardant au plus la moitié du paquet (12 au maximum). */
+export function remember(recent: readonly string[], key: string, deckSize: number): string[] {
+  const size = Math.min(12, Math.floor(deckSize / 2));
+  return size > 0 ? [...recent.filter((k) => k !== key), key].slice(-size) : [];
 }
 
 export function recordAnswer(stats: StatsMap, key: string, correct: boolean): StatsMap {

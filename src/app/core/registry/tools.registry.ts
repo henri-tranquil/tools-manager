@@ -465,6 +465,16 @@ export const SECTIONS: readonly Section[] = [
         panel: 'lecture',
       },
       {
+        id: 'jeu-traduction',
+        title: 'Jeu de traduction',
+        description: 'Du japonais au français, et inversement.',
+        mono: '⇄',
+        about:
+          'Traduisez des phrases japonaises en français, ou assemblez la phrase japonaise à partir du français : un jeu pour apprendre le vocabulaire et l’ordre des mots.',
+        type: 'internal',
+        panel: 'jeu-traduction',
+      },
+      {
         id: 'quiz-kanji',
         title: 'Quiz kanji',
         description: 'Sens et lectures des kanji JLPT N5 et N4.',

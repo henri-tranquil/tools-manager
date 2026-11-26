@@ -2,6 +2,7 @@ import { PHRASES } from './data/phrases';
 import { KANJI } from './data/kanji';
 import { eraseAt } from './draw-pad';
 import { analyze, furigana, Glossary, glossFor, sentenceRomaji, Token } from './dictionary';
+import { isKanji } from './kana';
 import { checkTranscription, parsePhrase } from './phrases';
 import {
   accuracy,
@@ -10,6 +11,7 @@ import {
   nextScore,
   pickWeighted,
   recordAnswer,
+  remember,
   toReview,
   weightOf,
 } from './quiz';
@@ -131,6 +133,28 @@ describe('jeu de lecture', () => {
     expect(checkTranscription('', gakusei)).toBe('wrong');
   });
 
+  it('a un corpus varié de phrases toutes différentes', () => {
+    expect(phrases.length).toBeGreaterThanOrEqual(150);
+    expect(new Set(phrases.map((p) => p.text)).size).toBe(phrases.length);
+    for (const level of [1, 2, 3]) {
+      expect(phrases.filter((p) => p.level === level).length).toBeGreaterThan(40);
+    }
+  });
+
+  it('place les furigana sur les seuls kanji et garde l’écriture d’origine en mode kana', () => {
+    for (const phrase of phrases) {
+      for (const word of phrase.words) {
+        for (const seg of word.ruby) {
+          if (seg.ruby) {
+            expect([...seg.text].every(isKanji), `${phrase.text} : ${seg.text}`).toBe(true);
+          }
+        }
+      }
+    }
+    expect(phrases.find((p) => p.text === 'こんにちは。')!.kana).toBe('こんにちは。');
+    expect(phrases.find((p) => p.text === 'こんにちは。')!.romaji).toBe('konnichiwa.');
+  });
+
   it('toutes les phrases du corpus sont lisibles et traduites', () => {
     for (const phrase of phrases) {
       expect(phrase.text, phrase.text).not.toMatch(/[[\]_ ]/);
@@ -202,6 +226,33 @@ describe('mécanique des quiz', () => {
         () => 0,
       ),
     ).toBeUndefined();
+  });
+
+  it('ne repropose pas les cartes récentes tant qu’il en reste d’autres', () => {
+    expect(
+      pickWeighted(
+        ['a', 'b', 'c'],
+        (x) => x,
+        {},
+        () => 0,
+        ['a', 'b'],
+      ),
+    ).toBe('c');
+    expect(
+      pickWeighted(
+        ['a', 'b'],
+        (x) => x,
+        {},
+        () => 0,
+        ['a', 'b'],
+      ),
+    ).toBe('a');
+    let recent: string[] = [];
+    for (const k of ['a', 'b', 'c', 'd', 'b']) {
+      recent = remember(recent, k, 6);
+    }
+    expect(recent).toEqual(['c', 'd', 'b']);
+    expect(remember([], 'a', 1)).toEqual([]);
   });
 
   it('propose des choix distincts contenant la bonne réponse', () => {

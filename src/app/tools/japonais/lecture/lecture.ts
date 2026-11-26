@@ -12,7 +12,15 @@ import { PhraseLevel, PHRASES } from '../data/phrases';
 import { loadJapaneseFont, useSpeech } from '../japanese';
 import { kanaToRomaji } from '../kana';
 import { checkTranscription, parsePhrase, Phrase, Verdict } from '../phrases';
-import { accuracy, EMPTY_SCORE, nextScore, pickWeighted, recordAnswer, StatsMap } from '../quiz';
+import {
+  accuracy,
+  EMPTY_SCORE,
+  nextScore,
+  pickWeighted,
+  recordAnswer,
+  remember,
+  StatsMap,
+} from '../quiz';
 
 type Display = 'kanji' | 'kana';
 
@@ -256,6 +264,8 @@ export class Lecture {
   });
   protected readonly precision = computed(() => accuracy(this.score()));
 
+  /** Dernières phrases tirées, pour ne pas les reproposer tout de suite. */
+  private recent: string[] = [];
   private readonly answerInput = viewChild<ElementRef<HTMLInputElement>>('answerInput');
 
   constructor() {
@@ -282,10 +292,11 @@ export class Lecture {
       (p) => p.text,
       this.stats(),
       cryptoRandomInt,
-      this.phrase().text,
+      this.recent,
     );
     if (phrase) {
       this.phrase.set(phrase);
+      this.recent = remember(this.recent, phrase.text, this.pool().length);
     }
     this.answer.set('');
     this.verdict.set(null);
