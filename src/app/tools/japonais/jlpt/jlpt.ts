@@ -6,7 +6,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { cue, finishSound, ring } from '../../../shared/beep';
 import { Countdown } from '../../../shared/countdown';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { cryptoRandomInt } from '../../../shared/random';
 import { readStored, writeStored } from '../../../shared/storage';
 import { loadJapaneseFont, useSpeech } from '../japanese';
@@ -50,7 +52,7 @@ const LEVELS: readonly { n: string; label: string; detail: string }[] = [
 
 @Component({
   selector: 'app-jlpt',
-  imports: [VoicePicker],
+  imports: [VoicePicker, SoundToggle],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .ticket {
@@ -381,6 +383,7 @@ const LEVELS: readonly { n: string; label: string; detail: string }[] = [
               [attr.data-low]="timer.remaining() < 60"
               >{{ timer.display() }}</span
             >
+            <app-sound-toggle />
           </div>
           <nav class="sheet-nav" aria-label="Questions de l'épreuve">
             @for (item of s.questions; track item.id) {
@@ -598,7 +601,23 @@ export class Jlpt {
   protected readonly levels = LEVELS;
   protected readonly scale = N5_SCALE;
   protected readonly speech = useSpeech();
-  protected readonly timer = new Countdown(() => this.endSection());
+  /** Bips d'avertissement à 5 min et 1 min de la fin, sonnerie quand le temps est écoulé. */
+  protected readonly timer = new Countdown(
+    () => {
+      // À la dernière épreuve, c'est l'arpège des résultats qui sonne.
+      if (this.sectionIndex() + 1 < this.sections().length) {
+        ring(3, 660);
+      }
+      this.endSection();
+    },
+    {
+      onSecond: (left) => {
+        if (left === 300 || left === 60) {
+          cue('warning');
+        }
+      },
+    },
+  );
 
   protected readonly phase = signal<Phase>('intro');
   protected readonly format = signal<ExamFormat>(
@@ -725,6 +744,7 @@ export class Jlpt {
     const result = scoreExam(this.sections(), this.answers());
     this.result.set(result);
     this.phase.set('results');
+    finishSound(result.passed);
     const attempt: Attempt = {
       date: new Date().toLocaleDateString('fr-FR'),
       format: this.format(),

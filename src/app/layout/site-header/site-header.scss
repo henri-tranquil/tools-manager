@@ -60,6 +60,7 @@
 }
 
 .header__pill {
+  --depth: 3px;
   flex: none;
   padding: 6px 11px;
   border: var(--bw-thin) solid var(--ink);
@@ -76,6 +77,7 @@
 }
 
 .header__search {
+  --depth: 3px;
   flex: none;
   display: flex;
   align-items: center;

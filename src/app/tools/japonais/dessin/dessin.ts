@@ -57,6 +57,7 @@ function strokeStart(d: string): Point {
       opacity: 0.6;
     }
     .match {
+      --depth: 3px;
       display: grid;
       grid-template-columns: 56px 1fr auto;
       gap: 4px 12px;

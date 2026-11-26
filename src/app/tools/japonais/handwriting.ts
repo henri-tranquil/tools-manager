@@ -42,6 +42,7 @@ function loadKanjiTemplates(): Promise<Template[]> {
       gap: 8px;
     }
     .candidate {
+      --depth: 3px;
       display: flex;
       flex-direction: column;
       align-items: center;

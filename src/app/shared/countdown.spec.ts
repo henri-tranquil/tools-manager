@@ -37,3 +37,17 @@ describe('Countdown', () => {
     expect(countdown.running()).toBe(false);
   });
 });
+
+describe('Countdown · onSecond', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('signale chaque seconde écoulée, jusqu’à zéro', () => {
+    const seconds: number[] = [];
+    const countdown = new Countdown(undefined, { onSecond: (s) => seconds.push(s) });
+    countdown.set(3);
+    countdown.start();
+    vi.advanceTimersByTime(3500);
+    expect(seconds).toEqual([2, 1, 0]);
+  });
+});

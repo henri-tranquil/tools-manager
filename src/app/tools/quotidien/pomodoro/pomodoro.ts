@@ -6,8 +6,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ring } from '../../../shared/beep';
+import { cue, tickLastSeconds } from '../../../shared/beep';
 import { Countdown } from '../../../shared/countdown';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { nextPhase, Phase, PHASE_LABELS } from '../daily-math';
 
@@ -29,6 +30,7 @@ const PHASE_COLORS: Readonly<Record<Phase, string>> = {
 @Component({
   selector: 'app-pomodoro',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .dots {
       display: flex;
@@ -65,7 +67,7 @@ const PHASE_COLORS: Readonly<Record<Phase, string>> = {
             }
           </div>
           <div class="row">
-            <button type="button" class="btn btn--dark lift" (click)="timer.toggle()">
+            <button type="button" class="btn btn--dark lift" (click)="toggle()">
               {{ timer.running() ? 'Pause' : 'Démarrer' }}
             </button>
             <button type="button" class="btn lift" (click)="skip()">Passer →</button>
@@ -91,8 +93,10 @@ const PHASE_COLORS: Readonly<Record<Phase, string>> = {
             </label>
           }
         </div>
+        <app-sound-toggle />
         <p class="note">
-          Les phases s'enchaînent automatiquement avec un bip. Réglages mémorisés dans ce
+          Les phases s'enchaînent automatiquement : arpège montant pour reprendre le travail,
+          descendant pour la pause, tic sur les 3 dernières secondes. Réglages mémorisés dans ce
           navigateur.
         </p>
       </div>
@@ -113,7 +117,9 @@ export class Pomodoro {
   protected readonly phase = signal<Phase>('travail');
   private readonly completedWork = signal(0);
 
-  protected readonly timer = new Countdown(() => this.advance(true));
+  protected readonly timer = new Countdown(() => this.advance(true), {
+    onSecond: (left) => tickLastSeconds(left),
+  });
   protected readonly label = computed(() => PHASE_LABELS[this.phase()]);
   protected readonly color = computed(() => PHASE_COLORS[this.phase()]);
   protected readonly session = computed(
@@ -131,6 +137,11 @@ export class Pomodoro {
   constructor() {
     this.timer.set(this.durationOf('travail'));
     inject(DestroyRef).onDestroy(() => this.timer.dispose());
+  }
+
+  protected toggle(): void {
+    cue(this.timer.running() ? 'pause' : 'start');
+    this.timer.toggle();
   }
 
   protected skip(): void {
@@ -161,7 +172,7 @@ export class Pomodoro {
     this.completedWork.set(next.completedWork);
     this.timer.set(this.durationOf(next.phase));
     if (autoStart) {
-      ring(next.phase === 'travail' ? 2 : 3);
+      cue(next.phase === 'travail' ? 'work' : 'break');
       this.timer.start();
     }
   }

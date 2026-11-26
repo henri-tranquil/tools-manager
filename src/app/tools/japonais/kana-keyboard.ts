@@ -52,7 +52,9 @@ const PUNCTUATION: readonly string[] = ['、', '。', '？', '！', '「', '」'
       padding: 6px 4px 4px;
       border: var(--bw-thin) solid var(--ink);
       border-radius: 10px;
+      --key-depth: 2px;
       background: var(--paper);
+      box-shadow: 2px 2px 0 var(--ink);
       cursor: pointer;
       font-family: var(--font-jp-display);
       font-weight: 600;
@@ -67,14 +69,16 @@ const PUNCTUATION: readonly string[] = ['、', '。', '？', '！', '「', '」'
         font-size: 11px;
         font-weight: 700;
       }
-      &:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: var(--shadow-sm);
-        background: var(--yellow-soft);
+      @media (hover: hover) {
+        &:hover {
+          transform: translate(var(--key-depth), var(--key-depth));
+          box-shadow: 0 0 0 var(--ink);
+          background: var(--yellow-soft);
+        }
       }
       &:active {
-        transform: translate(1px, 1px);
-        box-shadow: none;
+        transform: translate(var(--key-depth), var(--key-depth));
+        box-shadow: 0 0 0 var(--ink);
       }
       &--wide {
         padding: 6px 14px;

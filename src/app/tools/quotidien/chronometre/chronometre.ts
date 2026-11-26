@@ -6,6 +6,8 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { cue } from '../../../shared/beep';
+import { SoundToggle } from '../../../shared/sound-toggle';
 
 /** 83456 ms → « 01:23,45 » (ou « 1:01:23,45 » au-delà d'une heure). */
 function formatChrono(ms: number): string {
@@ -27,6 +29,7 @@ interface Lap {
 @Component({
   selector: 'app-chronometre',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   template: `
     <div class="tool-layout">
       <div class="tool-layout__results">
@@ -48,6 +51,7 @@ interface Lap {
               Remettre à zéro
             </button>
           </div>
+          <app-sound-toggle />
         </div>
       </div>
       <div class="tool-layout__inputs">
@@ -102,6 +106,7 @@ export class Chronometre {
   }
 
   protected toggle(): void {
+    cue(this.running() ? 'pause' : 'start');
     if (this.running()) {
       this.accumulated += performance.now() - this.startedAt;
       cancelAnimationFrame(this.frame);
@@ -115,6 +120,7 @@ export class Chronometre {
   }
 
   protected lap(): void {
+    cue('lap');
     const total = this.accumulated + performance.now() - this.startedAt;
     const previous = this.laps()[0]?.total ?? 0;
     this.laps.update((laps) => [{ n: laps.length + 1, split: total - previous, total }, ...laps]);

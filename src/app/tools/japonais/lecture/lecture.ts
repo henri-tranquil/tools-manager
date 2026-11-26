@@ -6,7 +6,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { PhraseLevel, PHRASES } from '../data/phrases';
 import { loadJapaneseFont, useSpeech } from '../japanese';
@@ -48,6 +50,7 @@ const VERDICTS: Readonly<Record<Verdict, { title: string; text: string }>> = {
 @Component({
   selector: 'app-lecture',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .sentence {
       position: relative;
@@ -185,6 +188,7 @@ const VERDICTS: Readonly<Record<Verdict, { title: string; text: string }>> = {
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <span class="kicker">Niveaux</span>
         <div class="stack">
           @for (l of levels; track l.id) {
@@ -325,6 +329,7 @@ export class Lecture {
   private grade(verdict: Verdict, correct: boolean): void {
     this.verdict.set(verdict);
     this.score.update((s) => nextScore(s, correct));
+    answerSound(verdict === 'exact' ? 'ok' : correct ? 'close' : 'ko', this.score().streak);
     this.stats.update((s) => recordAnswer(s, this.phrase().text, verdict === 'exact'));
     writeStored('japonais:lecture-stats', this.stats());
   }

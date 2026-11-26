@@ -92,8 +92,8 @@
 .tool.tool--open,
 .tool.tool--open:hover {
   background: var(--cream);
-  box-shadow: 2px 2px 0 var(--ink);
-  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--ink);
+  transform: translate(6px, 6px);
 }
 
 .tool__mono {

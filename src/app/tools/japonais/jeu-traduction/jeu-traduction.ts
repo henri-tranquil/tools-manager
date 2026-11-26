@@ -6,7 +6,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { PhraseLevel, PHRASES } from '../data/phrases';
 import { loadJapaneseFont, useSpeech } from '../japanese';
@@ -92,6 +94,7 @@ const RESULTS: Readonly<Record<string, Result>> = {
 @Component({
   selector: 'app-jeu-traduction',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .prompt {
       position: relative;
@@ -128,6 +131,7 @@ const RESULTS: Readonly<Record<string, Result>> = {
       background: var(--cream);
     }
     .tile-btn {
+      --depth: 3px;
       padding: 6px 14px;
       border: var(--bw-thin) solid var(--ink);
       border-radius: 10px;
@@ -399,6 +403,7 @@ const RESULTS: Readonly<Record<string, Result>> = {
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <div class="seg" role="group" aria-label="Sens de traduction">
           <button
             type="button"
@@ -649,6 +654,10 @@ export class JeuTraduction {
     this.result.set(result);
     this.scoreBefore = this.score();
     this.score.set(nextScore(this.scoreBefore, correct));
+    answerSound(
+      result.kind === 'ok' ? 'ok' : result.kind === 'wrong' ? 'ko' : 'close',
+      this.score().streak,
+    );
     this.stats.update((s) =>
       recordAnswer(s, `${this.direction()}:${this.phrase().text}`, result.kind === 'ok'),
     );

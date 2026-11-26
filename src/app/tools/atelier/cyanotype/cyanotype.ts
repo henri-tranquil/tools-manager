@@ -6,8 +6,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ring } from '../../../shared/beep';
+import { Alarm, cue, ring, tickLastSeconds } from '../../../shared/beep';
 import { Countdown } from '../../../shared/countdown';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { formatDecimal, parseDecimal } from '../../../shared/format';
 import { cyanotypeMix, EXPOSURES } from '../workshop-math';
 
@@ -16,6 +17,7 @@ const A4_CM2 = 21 * 29.7;
 @Component({
   selector: 'app-cyanotype',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .grid {
       display: grid;
@@ -93,7 +95,10 @@ const A4_CM2 = 21 * 29.7;
 
       <div class="tool-layout">
         <div class="tool-layout__inputs">
-          <p class="kicker">Minuteur d'exposition</p>
+          <div class="row">
+            <p class="kicker">Minuteur d'exposition</p>
+            <app-sound-toggle />
+          </div>
           <div class="grid" role="group" aria-label="Conditions d'exposition">
             @for (preset of exposures; track preset.id) {
               <button
@@ -115,7 +120,7 @@ const A4_CM2 = 21 * 29.7;
           <div class="tile tile--wide">
             <span class="clock" role="timer" aria-live="off">{{ timer.display() }}</span>
             <div class="row">
-              <button type="button" class="btn btn--coral lift" (click)="timer.toggle()">
+              <button type="button" class="btn btn--coral lift" (click)="toggle()">
                 {{ startLabel() }}
               </button>
               <button type="button" class="btn lift" (click)="reset()">Réinitialiser</button>
@@ -135,9 +140,18 @@ export class Cyanotype {
   protected readonly exposures = EXPOSURES;
   protected readonly sheets = signal('4');
   protected readonly exposure = signal(EXPOSURES[0].id);
-  protected readonly timer = new Countdown(() => ring(4, 660));
+  protected readonly alarm = new Alarm(() => ring(4, 660), 3000, 20);
+  protected readonly timer = new Countdown(() => this.alarm.start(), {
+    onSecond: (left) => tickLastSeconds(left, 5),
+  });
   protected readonly startLabel = computed(() =>
-    this.timer.running() ? 'Pause' : this.timer.remaining() === 0 ? 'Terminé !' : 'Démarrer',
+    this.alarm.active()
+      ? 'Arrêter la sonnerie'
+      : this.timer.running()
+        ? 'Pause'
+        : this.timer.remaining() === 0
+          ? 'Terminé !'
+          : 'Démarrer',
   );
 
   protected readonly mix = computed(() => {
@@ -156,15 +170,32 @@ export class Cyanotype {
 
   constructor() {
     this.timer.set(EXPOSURES[0].minutes * 60);
-    inject(DestroyRef).onDestroy(() => this.timer.dispose());
+    inject(DestroyRef).onDestroy(() => {
+      this.timer.dispose();
+      this.alarm.stop();
+    });
+  }
+
+  protected toggle(): void {
+    if (this.alarm.active()) {
+      this.alarm.stop();
+      return;
+    }
+    if (this.timer.remaining() === 0) {
+      return;
+    }
+    cue(this.timer.running() ? 'pause' : 'start');
+    this.timer.toggle();
   }
 
   protected choose(id: string, minutes: number): void {
+    this.alarm.stop();
     this.exposure.set(id);
     this.timer.set(minutes * 60);
   }
 
   protected reset(): void {
+    this.alarm.stop();
     const preset = EXPOSURES.find((e) => e.id === this.exposure()) ?? EXPOSURES[0];
     this.timer.set(preset.minutes * 60);
   }

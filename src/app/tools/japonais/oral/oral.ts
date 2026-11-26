@@ -6,7 +6,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { answerSound, unlockAudio } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { REPLIES, Reply } from '../data/listening';
 import { PhraseLevel, PHRASES } from '../data/phrases';
@@ -130,7 +132,7 @@ const replyTarget = (r: Reply): Target => ({
 
 @Component({
   selector: 'app-oral',
-  imports: [VoicePicker],
+  imports: [SoundToggle, VoicePicker],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .card {
@@ -382,6 +384,7 @@ const replyTarget = (r: Reply): Target => ({
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <div class="seg seg--grid" role="group" aria-label="Exercice">
           @for (m of modes; track m.id) {
             <button
@@ -549,6 +552,8 @@ export class Oral {
   }
 
   protected toggleListening(): void {
+    // Le score arrive après la reconnaissance, hors du clic : on autorise le son maintenant.
+    unlockAudio();
     if (this.status() === 'listening') {
       this.recognition?.stop();
       return;
@@ -624,6 +629,7 @@ export class Oral {
       const result = bestComparison(expected, transcripts.map(read));
       this.result.set(result);
       this.scores.update((s) => [...s, result.score]);
+      answerSound(result.score >= 0.75 ? 'ok' : result.score >= 0.4 ? 'close' : 'ko');
       this.stats.update((s) => recordAnswer(s, target.key, result.score >= 0.75));
       writeStored('japonais:oral-stats', this.stats());
     } catch {

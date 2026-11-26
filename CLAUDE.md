@@ -90,7 +90,7 @@ Le registre `src/app/core/registry/tools.registry.ts` (types dans `models.ts`) e
   - `ToolPanel` charge le composant avec `resource()` et l'affiche avec `NgComponentOutlet`. Seul le convertisseur reçoit une entrée (`pairId`, depuis `tool.unitPair`).
   - **Pour ajouter un outil interne** : créer le composant dans `src/app/tools/<section>/<outil>/`, ajouter une entrée dans `PANEL_LOADERS`, puis `panel: '<clé>'` dans le registre. Un outil interne sans `panel` affiche « En construction » (filet de sécurité ; le test du registre l'interdit).
 - **Logique séparée de l'affichage.** Les calculs sont des fonctions pures testées, regroupées par section : `dev/color.ts`, `dev/cron/cron-parser.ts`, `dev/budget-poids/load-time.ts`, `dev/lighthouse/{lighthouse-score,psi}.ts`, `sport/sport-math.ts`, `cuisine/kitchen-math.ts`, `atelier/workshop-math.ts`, `quotidien/daily-math.ts`, `conversion/convertisseur/unit-pairs.ts`, et pour le japonais `japonais/{kana,quiz,phrases,translation-game,exercises,listening,speaking,voices,jlpt,recognizer,dictionary}.ts`. Les composants restent légers ; les nouveaux outils utilisent un `template`/`styles` inline.
-- **Utilitaires partagés (`src/app/shared/`)** : `format.ts` (`parseDecimal` accepte la virgule, `formatDecimal` en fr-FR), `time.ts` (saisie et affichage de durées), `countdown.ts` (compte à rebours basé sur une échéance, pour minuteur, pomodoro, cyanotype ; appeler `dispose()` à la destruction), `beep.ts` (bips Web Audio), `random.ts` (`cryptoRandomInt` sans biais, injectable pour des tests déterministes), `storage.ts`.
+- **Utilitaires partagés (`src/app/shared/`)** : `format.ts` (`parseDecimal` accepte la virgule, `formatDecimal` en fr-FR), `time.ts` (saisie et affichage de durées), `countdown.ts` (compte à rebours basé sur une échéance, pour minuteur, pomodoro, cyanotype, examen blanc ; option `onSecond` pour les tics et avertissements ; appeler `dispose()` à la destruction), `beep.ts` (indications sonores Web Audio : `cue()`, `ring()`, `answerSound()` pour les quiz (discret, le carillon monte avec la série), `finishSound()` en fin de fiche ou d'examen, `Alarm` répétée jusqu'à l'arrêt, `tickLastSeconds` ; un seul `AudioContext` débloqué au clic par `unlockAudio()`, préférence globale `etabli:son`), `sound-toggle.ts` (bouton « Son » à poser dans chaque outil sonore : minuteur, cyanotype, pomodoro, chronomètre, niveau à bulle, tirage au sort, et tous les quiz et exercices de japonais sauf le dessin), `random.ts` (`cryptoRandomInt` sans biais, injectable pour des tests déterministes), `storage.ts`.
 - **Japonais (`src/app/tools/japonais/`).**
   - `kana.ts` : tables, rōmaji ↔ kana (Hepburn, saisie façon clavier japonais) et `matchesReading`, qui compare au son (shi = si, を = o). `quiz.ts` : tirage pondéré (les cartes ratées reviennent), score, statistiques en `localStorage`.
   - `recognizer.ts` : reconnaissance des dessins par l'algorithme $P, avec les tracés KanjiVG comme modèles (142 kana, et 103 kanji N5 chargés à la demande).
@@ -126,9 +126,9 @@ C'est ce que voient les recruteurs : chaque écran doit être soigné.
   - autocollant rond qui oscille ;
   - cartes de réalisations présentées comme des fenêtres de navigateur.
 - **Micro-interactions** :
-  - au survol, une carte se soulève (`translate(-3px,-3px)` et l'ombre grandit) ;
-  - au clic, elle s'enfonce (`translate(3px,3px)` et l'ombre rétrécit) ;
-  - une carte ouverte reste enfoncée.
+  - au survol (et au toucher), un bouton ou une carte **s'enfonce** : classe `.lift`, il glisse de la taille de son ombre (`--depth`, couleur `--depth-color`) et l'ombre disparaît ; jamais de soulèvement vers le haut. Un élément `.lift` dont l'ombre n'est pas de 6 px déclare son `--depth` ;
+  - une carte ouverte reste enfoncée ;
+  - les boutons fantômes (sans ombre) prennent un fond au survol.
   - Toutes les animations sont coupées sous `prefers-reduced-motion`.
 - **Accessibilité** : de vrais `<button>` et `<a>`, `aria-expanded` sur les cartes dépliables, `aria-pressed` sur les préréglages, `role="timer"`, un focus visible (contour de 4 px), et un contraste d'au moins 4.5:1 (texte toujours `#111` sur les couleurs vives).
 

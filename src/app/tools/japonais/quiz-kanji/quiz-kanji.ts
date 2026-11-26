@@ -6,7 +6,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { Kanji, KANJI } from '../data/kanji';
 import { loadJapaneseFont, useSpeech } from '../japanese';
@@ -40,6 +42,7 @@ function readingsOf(k: Kanji): string[] {
 @Component({
   selector: 'app-quiz-kanji',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .prompt {
       position: relative;
@@ -200,6 +203,7 @@ function readingsOf(k: Kanji): string[] {
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <span class="pill">JLPT N5 · niveau débutant</span>
         <div class="seg" role="group" aria-label="Question">
           <button
@@ -328,6 +332,7 @@ export class QuizKanji {
     }
     this.state.set(correct ? 'ok' : 'ko');
     this.score.update((s) => nextScore(s, correct));
+    answerSound(correct ? 'ok' : 'ko', this.score().streak);
     this.stats.update((s) => recordAnswer(s, this.kanji().k, correct));
     writeStored('japonais:kanji-stats', this.stats());
   }

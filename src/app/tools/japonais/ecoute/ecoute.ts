@@ -6,7 +6,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { Dialogue, DIALOGUES, REPLIES, Reply } from '../data/listening';
 import { PHRASES } from '../data/phrases';
@@ -74,7 +76,7 @@ const ALL_PHRASES = PHRASES.map(parsePhrase).filter((p) => p.level < 3);
 
 @Component({
   selector: 'app-ecoute',
-  imports: [VoicePicker],
+  imports: [SoundToggle, VoicePicker],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .player {
@@ -342,6 +344,7 @@ const ALL_PHRASES = PHRASES.map(parsePhrase).filter((p) => p.level < 3);
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <div class="seg seg--grid" role="group" aria-label="Exercice">
           @for (m of modes; track m.id) {
             <button
@@ -628,6 +631,7 @@ export class Ecoute {
     this.state.set(state);
     const correct = state !== 'ko';
     this.score.update((s) => nextScore(s, correct));
+    answerSound(state, this.score().streak);
     this.stats.update((s) => recordAnswer(s, this.key(), state === 'ok'));
     writeStored('japonais:ecoute-stats', this.stats());
   }

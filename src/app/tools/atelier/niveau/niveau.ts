@@ -3,10 +3,13 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   signal,
 } from '@angular/core';
+import { cue, unlockAudio } from '../../../shared/beep';
 import { formatDecimal } from '../../../shared/format';
+import { SoundToggle } from '../../../shared/sound-toggle';
 
 type Status = 'idle' | 'active' | 'denied' | 'unsupported';
 
@@ -20,6 +23,7 @@ const MAX_TILT = 20;
 @Component({
   selector: 'app-niveau',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .level {
       position: relative;
@@ -97,6 +101,8 @@ const MAX_TILT = 20;
           @case ('active') {
             <button type="button" class="btn lift" (click)="calibrate()">Mettre à zéro ici</button>
             <p class="note">Le zéro sert à compenser une coque ou un appareil légèrement bombé.</p>
+            <app-sound-toggle />
+            <p class="note">Un bip aigu retentit quand la surface est de niveau.</p>
           }
         }
         <p class="note">Les données du capteur restent sur l'appareil.</p>
@@ -161,13 +167,26 @@ export class Niveau {
     this.gamma.set(event.gamma);
   };
 
+  private lastLevelCue = 0;
+
   constructor() {
+    // Bip au passage à l'horizontale, pas plus d'une fois par seconde (le capteur tremble).
+    effect(() => {
+      if (this.reading().level && this.status() === 'active' && this.hasReading) {
+        const now = Date.now();
+        if (now - this.lastLevelCue > 1000) {
+          this.lastLevelCue = now;
+          cue('level');
+        }
+      }
+    });
     inject(DestroyRef).onDestroy(() =>
       window.removeEventListener('deviceorientation', this.onOrientation),
     );
   }
 
   protected async start(): Promise<void> {
+    unlockAudio();
     const ctor = DeviceOrientationEvent as unknown as OrientationEventWithPermission;
     if (ctor.requestPermission) {
       try {

@@ -121,21 +121,48 @@ input {
   }
 }
 
-/* Soulèvement au survol, enfoncement au clic. */
+/*
+ * Enfoncement au survol : l'élément glisse de la taille de son ombre et l'ombre disparaît,
+ * comme une touche qu'on presse. `--depth` vaut le décalage de l'ombre de l'élément
+ * (6px par défaut, réglé ci-dessous et dans les composants), `--depth-color` sa couleur.
+ * Survol réservé aux appareils qui en ont un (pas d'état collé après un tap) ; `:active`
+ * donne le même retour au doigt.
+ */
 .lift {
+  --depth: 6px;
+  --depth-color: var(--ink);
   transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 
-  &:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 var(--ink);
+  @media (hover: hover) {
+    &:hover:not(:disabled, [aria-disabled='true']) {
+      transform: translate(var(--depth), var(--depth));
+      box-shadow: 0 0 0 var(--depth-color);
+    }
   }
 
-  &:active {
-    transform: translate(3px, 3px);
-    box-shadow: 1px 1px 0 var(--ink);
+  &:active:not(:disabled, [aria-disabled='true']) {
+    transform: translate(var(--depth), var(--depth));
+    box-shadow: 0 0 0 var(--depth-color);
+    filter: brightness(0.95);
   }
+}
+
+/* Profondeur des éléments partagés qui portent .lift. */
+.btn.lift {
+  --depth: 5px;
+}
+.btn--dark.lift {
+  --depth: 6px;
+  --depth-color: var(--coral);
+}
+.btn--small.lift,
+.choice.lift {
+  --depth: 3px;
+}
+.btn--ghost.lift {
+  --depth: 2px;
 }
 
 .kicker {
@@ -208,6 +235,12 @@ input {
   &--ghost {
     background: transparent;
     box-shadow: none;
+    transition: background 0.1s ease;
+
+    /* Pas d'ombre à faire disparaître : le survol se marque par un fond. */
+    &:hover:not(:disabled) {
+      background: var(--paper);
+    }
   }
 }
 

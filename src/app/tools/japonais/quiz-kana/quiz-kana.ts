@@ -8,7 +8,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import { loadJapaneseFont, useSpeech } from '../japanese';
 import { KanaGroup, kanaEntries, kanaToRomaji, matchesReading, toKatakana } from '../kana';
@@ -56,6 +58,7 @@ const DEFAULT_SETTINGS: Settings = { script: 'hiragana', groups: ['base'], mode:
 @Component({
   selector: 'app-quiz-kana',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .prompt {
       position: relative;
@@ -180,6 +183,7 @@ const DEFAULT_SETTINGS: Settings = { script: 'hiragana', groups: ['base'], mode:
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <div class="seg" role="group" aria-label="Écriture">
           @for (s of scripts; track s.id) {
             <button
@@ -369,6 +373,7 @@ export class QuizKana {
     }
     this.state.set(correct ? 'ok' : 'ko');
     this.score.update((s) => nextScore(s, correct));
+    answerSound(correct ? 'ok' : 'ko', this.score().streak);
     this.stats.update((s) => recordAnswer(s, card.kana, correct));
     writeStored('japonais:kana-stats', this.stats());
     if (this.score().best > this.record()) {

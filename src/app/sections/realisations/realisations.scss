@@ -66,6 +66,7 @@
 }
 
 .work {
+  --depth: 8px;
   display: flex;
   flex-direction: column;
   border: var(--bw) solid var(--ink);

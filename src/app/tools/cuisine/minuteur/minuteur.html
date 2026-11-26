@@ -1,6 +1,9 @@
 <div class="minuteur">
   <div class="minuteur__clock">
-    <span class="pill pill--mint">{{ preset().label }}</span>
+    <div class="minuteur__top">
+      <span class="pill pill--mint">{{ preset().label }}</span>
+      <app-sound-toggle />
+    </div>
     <span
       class="minuteur__time"
       role="timer"
@@ -15,7 +18,7 @@
       }
     </p>
     <div class="minuteur__actions">
-      <button type="button" class="btn btn--coral lift minuteur__start" (click)="timer.toggle()">
+      <button type="button" class="btn btn--coral lift minuteur__start" (click)="toggle()">
         {{ startLabel() }}
       </button>
       <button type="button" class="btn lift" (click)="reset()">Réinitialiser</button>

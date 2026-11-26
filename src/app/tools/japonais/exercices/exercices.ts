@@ -6,7 +6,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { answerSound, finishSound } from '../../../shared/beep';
 import { cryptoRandomInt } from '../../../shared/random';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { readStored, writeStored } from '../../../shared/storage';
 import {
   checkExercise,
@@ -38,6 +40,7 @@ const LENGTHS = [5, 10, 20];
 @Component({
   selector: 'app-exercices',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .sheet {
       display: flex;
@@ -287,6 +290,7 @@ const LENGTHS = [5, 10, 20];
       </div>
 
       <div class="game__side">
+        <app-sound-toggle />
         <span class="pill">Niveau JLPT N5</span>
         <fieldset class="stack group">
           <legend class="kicker">Au programme</legend>
@@ -435,6 +439,7 @@ export class Exercices {
       return copy;
     });
     this.answer.set(answer.trim());
+    answerSound(correct ? 'ok' : 'ko', correct ? this.streak() : 0);
     this.stats.update((s) => {
       const k = s[exercise.kind] ?? { ok: 0, total: 0 };
       return { ...s, [exercise.kind]: { ok: k.ok + (correct ? 1 : 0), total: k.total + 1 } };
@@ -442,8 +447,19 @@ export class Exercices {
     writeStored('japonais:exercices-stats', this.stats());
   }
 
+  /** Bonnes réponses d'affilée en fin de fiche (pour faire monter le carillon). */
+  private streak(): number {
+    const list = this.answered();
+    let n = 0;
+    for (let i = list.length - 1; i >= 0 && list[i]?.correct; i -= 1) {
+      n += 1;
+    }
+    return n;
+  }
+
   protected next(): void {
     if (this.index() + 1 >= this.sheet().length) {
+      finishSound(this.good() >= 0.8 * this.sheet().length);
       this.finished.set(true);
       return;
     }

@@ -29,6 +29,13 @@
   }
 }
 
+.minuteur__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
 .minuteur__actions {
   display: flex;
   flex-wrap: wrap;
@@ -61,22 +68,25 @@
   border: var(--bw-thin) solid var(--ink);
   border-radius: 10px;
   background: var(--cream);
+  box-shadow: var(--shadow-sm);
   text-align: left;
   cursor: pointer;
   transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 
-  &:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--shadow-sm);
+  @media (hover: hover) {
+    &:hover {
+      transform: translate(3px, 3px);
+      box-shadow: 0 0 0 var(--ink);
+    }
   }
 
   &--active,
   &--active:hover {
     background: var(--yellow);
-    box-shadow: 4px 4px 0 var(--ink);
-    transform: translate(-2px, -2px);
+    box-shadow: 0 0 0 var(--ink);
+    transform: translate(3px, 3px);
   }
 }
 

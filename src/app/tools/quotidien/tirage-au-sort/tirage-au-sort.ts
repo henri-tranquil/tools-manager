@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { cue } from '../../../shared/beep';
+import { SoundToggle } from '../../../shared/sound-toggle';
 import { cryptoRandomInt } from '../../../shared/random';
 import { draw, flipCoin, randomBetween, rollDice } from '../daily-math';
 
@@ -14,6 +16,7 @@ const MODES: readonly { id: Mode; label: string }[] = [
 @Component({
   selector: 'app-tirage-au-sort',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SoundToggle],
   styles: `
     .result {
       display: flex;
@@ -133,7 +136,12 @@ const MODES: readonly { id: Mode; label: string }[] = [
               <p>Une pièce virtuelle, parfaitement équilibrée.</p>
             }
           }
-          <button type="button" class="btn btn--coral lift" (click)="roll()">Tirer au sort</button>
+          <div class="row">
+            <button type="button" class="btn btn--coral lift" (click)="roll()">
+              Tirer au sort
+            </button>
+            <app-sound-toggle />
+          </div>
           <p class="note">Tirage cryptographique (crypto.getRandomValues), sans biais.</p>
         </div>
         <div class="tool-layout__results">
@@ -170,6 +178,7 @@ export class TirageAuSort {
   protected readonly total = signal<number | null>(null);
 
   protected roll(): void {
+    cue('roll');
     this.total.set(null);
     switch (this.mode()) {
       case 'des': {
